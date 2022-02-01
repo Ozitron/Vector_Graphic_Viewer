@@ -2,31 +2,32 @@
 using System.Windows.Input;
 
 namespace VectorGraphicViewer.UI.Command
-{
-    class RelayCommand : ICommand
+{ public class RelayCommand : ICommand
     {
-        private Action<object> _action;
-        public RelayCommand(Action<object> action)
+        private readonly Action<object> _execute;
+        private readonly Predicate<object> _canExecute;
+
+        public RelayCommand(Action<object> execute, Predicate<object> canExecute = null)
         {
-            _action = action;
+            _execute = execute ?? throw new ArgumentNullException(nameof(execute));
+            _canExecute = canExecute;
         }
-        #region ICommand Members  
+
         public bool CanExecute(object parameter)
         {
-            return true;
+            return _canExecute == null || _canExecute(parameter);
         }
-        public event EventHandler CanExecuteChanged;
+
+        public event EventHandler CanExecuteChanged
+        {
+            add { CommandManager.RequerySuggested += value; }
+            remove { CommandManager.RequerySuggested -= value; }
+        }
+
         public void Execute(object parameter)
         {
-            if (parameter != null)
-            {
-                _action(parameter);
-            }
-            else
-            {
-                _action("Hello World");
-            }
+            _execute(parameter ?? "<N/A>");
         }
-        #endregion
+
     }
 }
