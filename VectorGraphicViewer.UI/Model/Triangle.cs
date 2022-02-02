@@ -1,18 +1,17 @@
 ﻿using System.Drawing;
 using Point = System.Windows.Point;
 
-
 namespace VectorGraphicViewer.UI.Model
 {
-    internal class Line : LinearShape
+    internal class Triangle : LinearShape
     {
         public override Color Color { get; }
         public sealed override Point[] Points { get; set; }
 
-        public Line(Point a, Point b, Color color)
+        public Triangle(Point a, Point b, Point c, Color color)
         {
-            Color = Color.Black;
-            Points = new[] { a, b };
+            Color = color;
+            Points = new[] { a, b, c };
         }
     }
 }

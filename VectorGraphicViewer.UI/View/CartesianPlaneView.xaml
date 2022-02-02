@@ -7,7 +7,7 @@
         xmlns:viewModel="clr-namespace:VectorGraphicViewer.UI.ViewModel"
         xmlns:helper="clr-namespace:VectorGraphicViewer.UI.Helper"
         mc:Ignorable="d"
-        Title="Vector Graphic Viewer" Height="768" Width="1024" MinHeight="240" MinWidth="320" Background="WhiteSmoke">
+        Title="Vector Graphic Viewer" Height="480" Width="640" MinHeight="240" MinWidth="320" Background="WhiteSmoke">
     <Window.DataContext>
         <viewModel:CartesianPlaneViewModel/>
     </Window.DataContext>
@@ -16,7 +16,6 @@
             <RowDefinition Height="Auto"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
-
         <StackPanel Orientation="Horizontal">
             <Button Content="Click" Width="60" Height="25"  Command="{Binding ReadCommand}"  />
             <Button Content="Clear" Width="60" Height="25"  Command="{Binding ClearCommand}"  />

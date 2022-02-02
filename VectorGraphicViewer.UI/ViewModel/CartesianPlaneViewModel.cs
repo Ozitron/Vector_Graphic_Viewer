@@ -1,11 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Shapes;
 using VectorGraphicViewer.UI.Command;
+using VectorGraphicViewer.UI.Model;
+using Line = VectorGraphicViewer.UI.Model.Line;
+using Point = System.Windows.Point;
 
 namespace VectorGraphicViewer.UI.ViewModel
 {
@@ -20,7 +23,8 @@ namespace VectorGraphicViewer.UI.ViewModel
             set
             {
                 _canvasWidth = value;
-                OnGridChanged(nameof(CanvasWidth));
+                if (value > 0)
+                    OnGridChanged(nameof(CanvasWidth));
 
             }
         }
@@ -28,7 +32,7 @@ namespace VectorGraphicViewer.UI.ViewModel
         private void OnGridChanged(string name)
         {
             OnPropertyChanged(name);
-            DrawCartesian();
+            DrawCartesianCoordinates();
         }
 
         public double CanvasHeight
@@ -37,72 +41,32 @@ namespace VectorGraphicViewer.UI.ViewModel
             set
             {
                 _canvasHeight = value;
-                OnGridChanged(nameof(CanvasHeight));
+                if (value > 0)
+                    OnGridChanged(nameof(CanvasHeight));
             }
         }
 
-        private readonly ObservableCollection<Line> _shapes;
+        private readonly ObservableCollection<Path> _shapes;
 
-        public IEnumerable<Line> Shapes => _shapes;
+        public IEnumerable<Path> Shapes => _shapes;
 
         public bool HasShapes => _shapes.Any();
 
         public ICommand ReadCommand { get; set; }
         public ICommand ClearCommand { get; set; }
-        
+
 
         private void MainButtonClick()
         {
-            DrawCartesian();
-            //var points = new Point[] { new Point(100, 200), new Point(150, 250), new Point(50, 100) };
-
-            //pointz = new List<Point>() { new Point(50, 100), new Point(150, 200), new Point(200, 250) };
-
-            //var myLine = new Line();
-            //myLine.Stroke = Brushes.LightSteelBlue;
-            //myLine.X1 = 50;
-            //myLine.X2 = 100;
-            //myLine.Y1 = 150;
-            //myLine.Y2 = 200;
-            //myLine.HorizontalAlignment = HorizontalAlignment.Left;
-            //myLine.VerticalAlignment = VerticalAlignment.Center;
-            //myLine.StrokeThickness = 2;
-            //_shapes.Add(myLine);
-
-            //myLine = new Line();
-            //myLine.Stroke = Brushes.Black;
-            //myLine.X1 = 50;
-            //myLine.X2 = 100;
-            //myLine.Y1 = 250;
-            //myLine.Y2 = 300;
-            //myLine.StrokeThickness = 2;
-            //_shapes.Add(myLine);
-
-            //PointCollection myPointCollection = new PointCollection();
-            //myPointCollection.Add(new Point(-15, -20));
-            //myPointCollection.Add(new Point(15, -20));
-            //myPointCollection.Add(new Point(0, 21));
-            //myPointCollection.Add(new Point(0, 30));
-            //myPointCollection.Add(new Point(-23, 10));
-
-            //Polygon myPolygon = new Polygon();
-            //myPolygon.Points = myPointCollection;
-            //myPolygon.Fill = Brushes.Blue;
-            //myPolygon.Width = 200;
-            //myPolygon.Height = 200;
-            //myPolygon.Stretch = Stretch.Fill;
-            //myPolygon.Stroke = Brushes.Black;
-            //myPolygon.StrokeThickness = 2;
-
-            //_shapes.Add(myPolygon);
+            DrawCartesianCoordinates();
         }
 
         public CartesianPlaneViewModel()
         {
-            _shapes = new ObservableCollection<Line>();
+            _shapes = new ObservableCollection<Path>();
             ReadCommand = new RelayCommand(o => MainButtonClick());
             ClearCommand = new RelayCommand(o => ClearButtonClick());
-            
+
             _shapes.CollectionChanged += OnShapesChanged;
         }
 
@@ -116,70 +80,83 @@ namespace VectorGraphicViewer.UI.ViewModel
             OnPropertyChanged(nameof(HasShapes));
         }
 
-        private void DrawCartesian()
+        private void DrawCartesianCoordinates()
         {
             _shapes.Clear();
 
-            //Font drawFont = new Font("Calibri", 9);
-            //SolidBrush drawBrush = new SolidBrush(Color.Black);
+            _shapes.Add(new Line(new Point(CanvasWidth / 2, 0),
+                new Point(CanvasWidth / 2, CanvasHeight), Color.Black).GetShape());
 
-            //// Draw cartesian coordinate plane central lines
-            //_graphics.DrawLine(_pen, 0, _center.Y, _pictureBox.Width, _center.Y);
-            //_graphics.DrawLine(_pen, _center.X, 0, _center.X, _pictureBox.Height);
-            //_pen.DashStyle = DashStyle.Dot;
+            _shapes.Add(new Line(new Point(0, CanvasHeight / 2),
+                new Point(CanvasWidth, CanvasHeight / 2), Color.Black).GetShape());
 
+            DrawShapes();
+        }
 
-            var myLine = new Line();
-            myLine.Stroke = Brushes.Black;
-            myLine.X1 = CanvasWidth / 2;
-            myLine.X2 = CanvasWidth / 2;
-            myLine.Y1 = 0;
-            myLine.Y2 = CanvasHeight;
-            //myLine.HorizontalAlignment = HorizontalAlignment.Left;
-            //myLine.VerticalAlignment = VerticalAlignment.Center;
-            myLine.StrokeThickness = 2;
-            _shapes.Add(myLine);
+        private void DrawShapes()
+        {
+            //myLine = new System.Windows.Shapes.Line();
+            //myLine.Stroke = Brushes.Black;
+            //myLine.X1 = 0;
+            //myLine.X2 = CanvasWidth;
+            //myLine.Y1 = CanvasHeight / 2;
+            //myLine.Y2 = CanvasHeight / 2;
+            //myLine.StrokeThickness = 2;
+            //_shapes.Add(myLine);
 
-            myLine = new Line();
-            myLine.Stroke = Brushes.Black;
-            myLine.X1 = 0;
-            myLine.X2 = CanvasWidth;
-            myLine.Y1 = CanvasHeight / 2;
-            myLine.Y2 = CanvasHeight / 2;
-            myLine.StrokeThickness = 2;
-            _shapes.Add(myLine);
+            // line
+            //LineGeometry line = new LineGeometry();
+            //line.StartPoint = new System.Windows.Point(100, 150);
+            //line.EndPoint = new System.Windows.Point(200, 250);
+            //Path path = new Path();
+            //path.Stroke = Brushes.Red;
+            //path.StrokeThickness = 10;
+            //path.Data = line;
+            //_shapes.Add(path);
 
-            // Draw X line and print scaled line numbers
-            //int count = 1;
-            //while (count * interval < _pictureBox.Width / 2.0)
-            //{
-            //    // draw vertical dotted lines
-            //    _graphics.DrawLine(_pen, _center.X - count * interval, 0, _center.X - count * interval, _pictureBox.Height);
-            //    _graphics.DrawLine(_pen, _center.X + count * interval, 0, _center.X + count * interval, _pictureBox.Height);
+            //var test =
+            //    new Model.Line(new System.Windows.Point(100, 150), new System.Windows.Point(200, 250), Color.Aqua);
+            //_shapes.Add(test.GetShape());
 
-            //    // print line X numbers
-            //    number = (count * interval / _scaleFactor);
-            //    _graphics.DrawString($"{number:0.0}", drawFont, drawBrush, (_center.X + (count * interval)) - 15, _center.Y);
-            //    _graphics.DrawString($"-{number:0.0}", drawFont, drawBrush, (_center.X - (count * interval)) - 15, _center.Y);
+            //// eliptical
+            ////var ellipse = new EllipseGeometry();
+            ////ellipse.Center = new Point(150, 150);
+            ////ellipse.RadiusX = 60;
+            ////ellipse.RadiusY = 40;
+            ////Path path2 = new Path();
+            ////path2.Stroke = Brushes.Red;
+            ////path2.Data = ellipse;
+            ////_shapes.Add(path2);
 
-            //    count++;
-            //}
+            //LineGeometry line1 = new LineGeometry();
+            //line1.StartPoint = new Point(75, 80);
+            //line1.EndPoint = new Point(125, 150);
+            //LineGeometry line2 = new LineGeometry();
+            //line2.StartPoint = new Point(125, 150);
+            //line2.EndPoint = new Point(150, 120);
+            //LineGeometry line3 = new LineGeometry();
+            //line3.StartPoint = new Point(150, 120);
+            //line3.EndPoint = new Point(75, 80);
+            //GeometryGroup geometryGroup = new GeometryGroup();
+            //geometryGroup.Children.Add(line1);
+            //geometryGroup.Children.Add(line2);
+            //geometryGroup.Children.Add(line3);
+            //Path path3 = new Path();
+            //path3.Stroke = Brushes.BurlyWood;
+            //path3.StrokeThickness = 10;
+            //path3.Data = geometryGroup;
+            //_shapes.Add(path3);
 
-            //// Draw Y line and print scaled line numbers
-            //count = 1;
-            //while (count * interval < _pictureBox.Height / 2.0)
-            //{
-            //    // draw horizontal dotted lines
-            //    _graphics.DrawLine(_pen, 0, _center.Y - (count * interval), _pictureBox.Width, _center.Y - (count * interval));
-            //    _graphics.DrawLine(_pen, 0, _center.Y + (count * interval), _pictureBox.Width, _center.Y + (count * interval));
+            var test = new Triangle(new Point(75, 80), new Point(125, 150), new Point(150, 120), new Color());
 
-            //    // print line Y numbers
-            //    number = (count * interval / _scaleFactor);
-            //    _graphics.DrawString($"{number:0.0}", drawFont, drawBrush, _center.X, _center.Y - (count * interval) - 12);
-            //    _graphics.DrawString($"-{number:0.0}", drawFont, drawBrush, _center.X, _center.Y + (count * interval) - 12);
+            //var test = new Quadrilateral(new Point(75, 80),
+            //    new Point(125, 150),
+            //    new Point(150, 120),
+            //         new Point(200, 220),
+            //    Color.Red
+            //    );
 
-            //    count++;
-            //}
+            _shapes.Add(test.GetShape());
         }
     }
 }
