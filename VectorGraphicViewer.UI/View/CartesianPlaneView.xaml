@@ -5,25 +5,30 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:VectorGraphicViewer.UI.View"
         xmlns:viewModel="clr-namespace:VectorGraphicViewer.UI.ViewModel"
+        xmlns:helper="clr-namespace:VectorGraphicViewer.UI.Helper"
         mc:Ignorable="d"
-        Title="CartesianPlaneView" Height="450" Width="800">
+        Title="Vector Graphic Viewer" Height="768" Width="1024" MinHeight="240" MinWidth="320" Background="WhiteSmoke">
     <Window.DataContext>
         <viewModel:CartesianPlaneViewModel/>
     </Window.DataContext>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"></RowDefinition>
-            <RowDefinition Height="Auto"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
 
-        <Button Content="Click" Height="20"  Command="{Binding ReadCommand}"  />
-        <Button Grid.Row="1" Content="Clear" Height="20"  Command="{Binding ClearCommand}"  />
+        <StackPanel Orientation="Horizontal">
+            <Button Content="Click" Width="60" Height="25"  Command="{Binding ReadCommand}"  />
+            <Button Content="Clear" Width="60" Height="25"  Command="{Binding ClearCommand}"  />
+        </StackPanel>
         <Grid Grid.Row="2" Name="cartesianGrid">
             <ItemsControl ItemsSource="{Binding Shapes, UpdateSourceTrigger=PropertyChanged}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <Canvas Margin="5,5,5,5" Background="Azure"/>
+                        <Canvas Margin="5,3,5,5" Background="White" 
+                                helper:SizeObserver.Observe="True"
+                                helper:SizeObserver.ObservedWidth="{Binding CanvasWidth, Mode=OneWayToSource}"
+                                helper:SizeObserver.ObservedHeight="{Binding CanvasHeight, Mode=OneWayToSource}"/>
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
             </ItemsControl>
