@@ -3,15 +3,15 @@ using Point = System.Windows.Point;
 
 namespace VectorGraphicViewer.UI.Model
 {
-    internal class Triangle : LinearShape
+    internal class Triangle : Line
     {
-        public override Color Color { get; }
-        public sealed override Point[] Points { get; set; }
+        public Point C { get; }
+        public bool IsFilled { get; }
 
-        public Triangle(Point a, Point b, Point c, Color color)
+        public Triangle(Point a, Point b, Point c, bool isFilled, Color color) : base(a, b, color)
         {
-            Color = color;
-            Points = new[] { a, b, c };
+            C = c;
+            IsFilled = isFilled;
         }
     }
 }

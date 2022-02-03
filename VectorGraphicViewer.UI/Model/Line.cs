@@ -1,18 +1,20 @@
 ﻿using System.Drawing;
+using VectorGraphicViewer.UI.Model.Base;
 using Point = System.Windows.Point;
-
 
 namespace VectorGraphicViewer.UI.Model
 {
-    internal class Line : LinearShape
+    internal class Line : IShape
     {
-        public override Color Color { get; }
-        public sealed override Point[] Points { get; set; }
+        public Point A { get; set; }
+        public Point B { get; set; }
+        public Color Color { get; set; }
 
         public Line(Point a, Point b, Color color)
         {
-            Color = Color.Black;
-            Points = new[] { a, b };
+            A = a;
+            B = b;
+            Color = color;
         }
     }
 }

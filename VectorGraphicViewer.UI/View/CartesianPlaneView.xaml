@@ -17,8 +17,11 @@
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
         <StackPanel Orientation="Horizontal">
-            <Button Content="Click" Width="60" Height="25"  Command="{Binding ReadCommand}"  />
+            <Button Content="Browse" Width="60" Height="25" Click="PickFile_OnClick" />
+            <Button Content="Draw" Width="60" Height="25"  Command="{Binding ReadCommand}"  />
             <Button Content="Clear" Width="60" Height="25"  Command="{Binding ClearCommand}"  />
+            <TextBox x:Name="FilePathTextBox" Width="200" Height="25" IsEnabled="False" Margin="5,0" 
+                     Text="{Binding DestinationPath, ValidatesOnNotifyDataErrors=True}" />
         </StackPanel>
         <Grid Grid.Row="2" Name="cartesianGrid">
             <ItemsControl ItemsSource="{Binding Shapes, UpdateSourceTrigger=PropertyChanged}">

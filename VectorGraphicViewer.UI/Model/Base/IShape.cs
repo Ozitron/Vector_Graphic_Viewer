@@ -1,12 +1,9 @@
 ﻿using System.Drawing;
-using System.Windows.Shapes;
 
-namespace VectorGraphicViewer.UI.Model
+namespace VectorGraphicViewer.UI.Model.Base
 {
     public interface IShape
     {
         public Color Color { get; }
-
-        Path GetShape(double scale);
     }
 }
