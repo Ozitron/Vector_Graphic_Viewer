@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
+using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
@@ -15,18 +16,20 @@ namespace VectorGraphicViewer.UI.ViewModel
     internal class CartesianPlaneViewModel : ViewModelBase
     {
         #region fields
-        
+
         private string _destinationPath;
         private readonly IReadService _readService;
+        private readonly IDrawService _drawService;
         private double _canvasWidth;
         private double _canvasHeight;
-        private readonly ObservableCollection<Shape> _shapes;
-        private IEnumerable<IShape> _shapeList;
+        private ObservableCollection<Shape> _scaledShapes;
+        private List<IShape> _shapes;
+        private List<Shape> _getShapes;
 
         #endregion
-        
-        public IEnumerable<Shape> Shapes => _shapes;
-        public bool HasShapes => _shapes.Any();
+
+        public IEnumerable<Shape> ScaledShapes => _scaledShapes;
+        public bool HasShapes => _scaledShapes.Any();
         public ICommand ReadCommand { get; set; }
         public ICommand ClearCommand { get; set; }
 
@@ -66,7 +69,7 @@ namespace VectorGraphicViewer.UI.ViewModel
 
         private void ReadShapes(string filePath)
         {
-            _shapeList = _readService.Read(filePath);
+            _shapes = _readService.Read(filePath);
         }
 
         private void OnGridChanged(string name)
@@ -86,30 +89,31 @@ namespace VectorGraphicViewer.UI.ViewModel
         public CartesianPlaneViewModel()
         {
             _readService = new ReadService();
-            _shapes = new ObservableCollection<Shape>();
+            _drawService = new DrawService();
+            _scaledShapes = new ObservableCollection<Shape>();
             ReadCommand = new RelayCommand(o => MainButtonClick());
             ClearCommand = new RelayCommand(o => ClearButtonClick());
 
-            _shapes.CollectionChanged += OnShapesChanged;
+            _scaledShapes.CollectionChanged += OnScaledShapesChanged;
         }
 
         private void ClearButtonClick()
         {
-            _shapes.Clear();
+            _scaledShapes.Clear();
             DrawCartesianCoordinates();
             DestinationPath = string.Empty;
             OnPropertyChanged(nameof(DestinationPath));
         }
 
-        private void OnShapesChanged(object sender, NotifyCollectionChangedEventArgs e)
+        private void OnScaledShapesChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             OnPropertyChanged(nameof(HasShapes));
         }
 
         private void DrawCartesianCoordinates()
         {
-            _shapes.Clear();
-            _shapes.Add(new Line
+            _scaledShapes.Clear();
+            _scaledShapes.Add(new Line
             {
                 // x line
                 Stroke = Brushes.Black,
@@ -120,7 +124,7 @@ namespace VectorGraphicViewer.UI.ViewModel
                 StrokeThickness = 2
             });
 
-            _shapes.Add(new Line
+            _scaledShapes.Add(new Line
             {
                 Stroke = Brushes.Black,
                 X1 = 0,
@@ -130,28 +134,22 @@ namespace VectorGraphicViewer.UI.ViewModel
                 StrokeThickness = 2
             });
 
+
+
             //DrawShapes();
         }
 
         private void DrawShapes()
         {
-            //// Polygon
-            //var p = new Polygon();
-            //p.Stroke = Brushes.Black;
-            //p.Fill = Brushes.LightBlue;
-            //p.StrokeThickness = 2;
-            //p.Points = new PointCollection() { new Point(100, 100), new Point(45, 68), new Point(102, 135), new Point(220, 256) };
-            //_shapes.Add(p);
+            _getShapes = _drawService.GetScaledShapes(_shapes, new Point(CanvasWidth, CanvasHeight));
 
-            //// Elliptical
-            //var ellipse = new EllipseGeometry();
-            //ellipse.Center = new Point(150, 150);
-            //ellipse.RadiusX = 60;
-            //ellipse.RadiusY = 40;
-            //var path2 = new Path();
-            //path2.Stroke = Brushes.Red;
-            //path2.Data = ellipse;
-            //_shapes.Add(path2);
+
+            foreach (var shape in _getShapes)
+            {
+                _scaledShapes.Add(shape);
+            }
+
+             
         }
     }
 }

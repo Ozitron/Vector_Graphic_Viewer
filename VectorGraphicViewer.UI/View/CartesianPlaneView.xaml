@@ -24,7 +24,7 @@
                      Text="{Binding DestinationPath, ValidatesOnNotifyDataErrors=True}" />
         </StackPanel>
         <Grid Grid.Row="2" Name="cartesianGrid">
-            <ItemsControl ItemsSource="{Binding Shapes, UpdateSourceTrigger=PropertyChanged}">
+            <ItemsControl ItemsSource="{Binding ScaledShapes, UpdateSourceTrigger=PropertyChanged}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <Canvas Margin="5,3,5,5" Background="White" 

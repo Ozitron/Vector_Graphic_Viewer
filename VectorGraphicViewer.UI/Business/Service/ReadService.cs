@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.AccessControl;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using VectorGraphicViewer.UI.Helper;
 using VectorGraphicViewer.UI.Model;
 using VectorGraphicViewer.UI.Model.Base;
@@ -12,9 +14,11 @@ namespace VectorGraphicViewer.UI.Business.Service
     public class ReadService : IReadService
     {
         private readonly List<IShape> _shapeList = new();
-
-        IEnumerable<IShape> IReadService.Read(string filePath)
+        
+        List<IShape> IReadService.Read(string filePath)
         {
+            //TryDeserialize(filePath);
+
             _shapeList.Clear();
             using var reader = new StreamReader(filePath);
             var rawData = reader.ReadToEnd().ToLower();
@@ -66,5 +70,39 @@ namespace VectorGraphicViewer.UI.Business.Service
 
             return _shapeList;
         }
+
+
+
+        private static void TryDeserialize(string filePath)
+        {
+            var options = new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            };
+
+
+            string fileName = filePath;
+            string jsonString = File.ReadAllText(fileName);
+            TriangleModel test = JsonSerializer.Deserialize<TriangleModel>(jsonString, options)!;
+        }
     }
+
+    public class LineModel
+    {
+        public string Type { get; set; }
+        public string A { get; set; }
+        public string B { get; set; }
+        public string Color { get; set; }
+    }
+
+    public class TriangleModel
+    {
+        public string Type { get; set; }
+        public string A { get; set; }
+        public string B { get; set; }
+        public string C { get; set; }
+        public string Filled { get; set; }
+        public string Color { get; set; }
+    }
+
 }
