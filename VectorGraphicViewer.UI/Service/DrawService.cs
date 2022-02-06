@@ -9,7 +9,7 @@ using VectorGraphicViewer.UI.Model;
 using VectorGraphicViewer.UI.Model.Base;
 using Ellipse = VectorGraphicViewer.UI.Model.Ellipse;
 
-namespace VectorGraphicViewer.UI.Business.Service
+namespace VectorGraphicViewer.UI.Service
 {
     internal class DrawService : IDrawService
     {

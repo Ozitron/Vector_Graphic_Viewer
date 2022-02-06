@@ -2,10 +2,9 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Shapes;
-using VectorGraphicViewer.UI.Business.Service;
 using VectorGraphicViewer.UI.Command;
 using VectorGraphicViewer.UI.Model.Base;
+using VectorGraphicViewer.UI.Service;
 
 namespace VectorGraphicViewer.UI.ViewModel
 {

@@ -1,16 +1,16 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
+using Newtonsoft.Json;
 using VectorGraphicViewer.UI.Helper;
 using VectorGraphicViewer.UI.Model;
 using VectorGraphicViewer.UI.Model.Base;
 using Point = System.Windows.Point;
 using Line = VectorGraphicViewer.UI.Model.LinearShape;
 
-namespace VectorGraphicViewer.UI.Business.Service
+namespace VectorGraphicViewer.UI.Service
 {
     public class ReadService : IReadService
     {

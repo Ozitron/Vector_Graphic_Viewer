@@ -8,7 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Business\Operation\" />
+    <Compile Remove="Service\Operation\**" />
+    <EmbeddedResource Remove="Service\Operation\**" />
+    <None Remove="Service\Operation\**" />
+    <Page Remove="Service\Operation\**" />
   </ItemGroup>
 
   <ItemGroup>

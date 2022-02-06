@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using VectorGraphicViewer.UI.Model.Base;
 
-namespace VectorGraphicViewer.UI.Business.Service
+namespace VectorGraphicViewer.UI.Service
 {
     internal interface IReadService
     {
