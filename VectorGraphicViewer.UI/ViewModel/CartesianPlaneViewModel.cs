@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -17,34 +15,30 @@ namespace VectorGraphicViewer.UI.ViewModel
     {
         #region fields
 
-        private string _destinationPath;
-        private readonly IReadService _readService;
-        private readonly IDrawService _drawService;
         private double _canvasWidth;
         private double _canvasHeight;
-        private ObservableCollection<Shape> _scaledShapes;
         private List<IShape> _shapes;
-        private List<Shape> _getShapes;
+        private ObservableCollection<Shape> _scaledShapes;
+        private readonly IReadService _readService;
+        private readonly IDrawService _drawService;
 
         #endregion
 
-        public IEnumerable<Shape> ScaledShapes => _scaledShapes;
-        public bool HasShapes => _scaledShapes.Any();
+        public ObservableCollection<Shape> ScaledShapes
+        {
+            get => _scaledShapes;
+            set
+            {
+                _scaledShapes = value;
+                OnPropertyChanged(nameof(ScaledShapes));
+            }
+        }
+
         public ICommand ReadCommand { get; set; }
         public ICommand ClearCommand { get; set; }
 
-        public string DestinationPath
-        {
-            get => _destinationPath;
-            set
-            {
-                _destinationPath = value;
-                OnPropertyChanged(nameof(DestinationPath));
+        public string DestinationPath { get; set; }
 
-                if (!string.IsNullOrEmpty(_destinationPath))
-                    ReadShapes(DestinationPath);
-            }
-        }
         public double CanvasWidth
         {
             get => _canvasWidth;
@@ -75,14 +69,18 @@ namespace VectorGraphicViewer.UI.ViewModel
         private void OnGridChanged(string name)
         {
             OnPropertyChanged(name);
+            
+            ScaledShapes.Clear();
+            DrawScaledShapes();
 
-            if (CanvasHeight > 0)
-                DrawCartesianCoordinates();
         }
 
-        private void MainButtonClick()
+        private void ReadButtonClick()
         {
-            DrawShapes();
+            DrawScaledShapes();
+            ReadShapes(DestinationPath);
+            DrawScaledShapes();
+
             //DrawCartesianCoordinates();
         }
 
@@ -91,65 +89,24 @@ namespace VectorGraphicViewer.UI.ViewModel
             _readService = new ReadService();
             _drawService = new DrawService();
             _scaledShapes = new ObservableCollection<Shape>();
-            ReadCommand = new RelayCommand(o => MainButtonClick());
+            ReadCommand = new RelayCommand(o => ReadButtonClick());
             ClearCommand = new RelayCommand(o => ClearButtonClick());
-
-            _scaledShapes.CollectionChanged += OnScaledShapesChanged;
         }
 
         private void ClearButtonClick()
         {
-            _scaledShapes.Clear();
-            DrawCartesianCoordinates();
+            ScaledShapes.Clear();
+            DrawScaledShapes();
             DestinationPath = string.Empty;
             OnPropertyChanged(nameof(DestinationPath));
         }
 
-        private void OnScaledShapesChanged(object sender, NotifyCollectionChangedEventArgs e)
+
+        private void DrawScaledShapes()
         {
-            OnPropertyChanged(nameof(HasShapes));
-        }
-
-        private void DrawCartesianCoordinates()
-        {
-            _scaledShapes.Clear();
-            _scaledShapes.Add(new Line
-            {
-                // x line
-                Stroke = Brushes.Black,
-                X1 = CanvasWidth / 2,
-                X2 = CanvasWidth / 2,
-                Y1 = 0,
-                Y2 = CanvasHeight,
-                StrokeThickness = 2
-            });
-
-            _scaledShapes.Add(new Line
-            {
-                Stroke = Brushes.Black,
-                X1 = 0,
-                X2 = CanvasWidth,
-                Y1 = CanvasHeight / 2,
-                Y2 = CanvasHeight / 2,
-                StrokeThickness = 2
-            });
-
-
-
-            //DrawShapes();
-        }
-
-        private void DrawShapes()
-        {
-            _getShapes = _drawService.GetScaledShapes(_shapes, new Point(CanvasWidth, CanvasHeight));
-
-
-            foreach (var shape in _getShapes)
-            {
-                _scaledShapes.Add(shape);
-            }
-
-             
+            var shapes = _drawService.GetScaledShapes(_shapes, new Point(CanvasWidth, CanvasHeight));
+            shapes.AddRange(_scaledShapes);
+            ScaledShapes = new ObservableCollection<Shape>(shapes);
         }
     }
 }

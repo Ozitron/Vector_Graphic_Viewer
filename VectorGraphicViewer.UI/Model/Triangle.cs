@@ -1,17 +1,23 @@
 ﻿using System.Drawing;
+using VectorGraphicViewer.UI.Model.Base;
 using Point = System.Windows.Point;
 
 namespace VectorGraphicViewer.UI.Model
 {
-    internal class Triangle : Line
+    internal class Triangle : ILine
     {
-        public Point C { get; }
+
+        public Color Color { get; }
         public bool IsFilled { get; }
 
-        public Triangle(Point a, Point b, Point c, bool isFilled, Color color) : base(a, b, color)
+        public Point[] Points { get; set; }
+
+        public Triangle(Point a, Point b, Point c, bool isFilled, Color color)
         {
-            C = c;
+            Points = new[] { a, b, c };
             IsFilled = isFilled;
+            Color = color;
         }
+
     }
 }
