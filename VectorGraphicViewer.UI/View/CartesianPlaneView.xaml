@@ -7,7 +7,7 @@
         xmlns:viewModel="clr-namespace:VectorGraphicViewer.UI.ViewModel"
         xmlns:helper="clr-namespace:VectorGraphicViewer.UI.Helper"
         mc:Ignorable="d"
-        Title="Vector Graphic Viewer" Height="480" Width="640" MinHeight="240" MinWidth="320" Background="WhiteSmoke">
+        Title="Vector Graphic Viewer" Height="480" Width="600" MinHeight="240" MinWidth="320" Background="WhiteSmoke">
     <Window.DataContext>
         <viewModel:CartesianPlaneViewModel/>
     </Window.DataContext>
@@ -23,11 +23,11 @@
             <TextBox x:Name="FilePathTextBox" Width="200" Height="25" IsEnabled="False" Margin="5,0" 
                      Text="{Binding DestinationPath, ValidatesOnNotifyDataErrors=True}" />
         </StackPanel>
-        <Grid Grid.Row="1" Name="cartesianGrid">
+        <Grid Grid.Row="1" Name="cartesianGrid" ClipToBounds="True">
             <ItemsControl ItemsSource="{Binding ScaledShapes, UpdateSourceTrigger=PropertyChanged}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <Canvas Margin="5,3,5,5" Background="White" 
+                        <Grid Margin="5,3,5,5" Background="White" 
                                 helper:SizeObserver.Observe="True"
                                 helper:SizeObserver.ObservedWidth="{Binding CanvasWidth, Mode=OneWayToSource}"
                                 helper:SizeObserver.ObservedHeight="{Binding CanvasHeight, Mode=OneWayToSource}"/>

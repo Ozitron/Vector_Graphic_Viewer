@@ -1,23 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Security.AccessControl;
 using System.Text.Json;
-using System.Text.Json.Serialization;
-using VectorGraphicViewer.UI.Helper;
 using VectorGraphicViewer.UI.Model;
 using VectorGraphicViewer.UI.Model.Base;
+using Point = System.Windows.Point;
 
 namespace VectorGraphicViewer.UI.Business.Service
 {
     public class ReadService : IReadService
     {
         private readonly List<IShape> _shapeList = new();
-        
+
         List<IShape> IReadService.Read(string filePath)
         {
-            //TryDeserialize(filePath);
+            if (string.IsNullOrEmpty(filePath))
+                return _shapeList;
 
             _shapeList.Clear();
             using var reader = new StreamReader(filePath);
@@ -34,14 +35,14 @@ namespace VectorGraphicViewer.UI.Business.Service
             while (shapes.MoveNext())
             {
                 var shape = shapes.Current.Deserialize<Dictionary<string, string>>();
-                var color = ReadHelper.GetColor(shape.FirstOrDefault(x => x.Key == "color").Value);
+                var color = GetColor(shape.FirstOrDefault(x => x.Key == "color").Value);
 
                 if (shape.First(x => x.Key == "type").Value == "line")
                 {
-                    _shapeList.Add(new Line
+                    _shapeList.Add(new LinearShape
                     (
-                        ReadHelper.GetPoint(shape.FirstOrDefault(x => x.Key == "a").Value),
-                        ReadHelper.GetPoint(shape.FirstOrDefault(x => x.Key == "b").Value),
+                        GetPoint(shape.FirstOrDefault(x => x.Key == "a").Value),
+                        GetPoint(shape.FirstOrDefault(x => x.Key == "b").Value),
                         color
                     ));
                 }
@@ -49,10 +50,10 @@ namespace VectorGraphicViewer.UI.Business.Service
                 {
                     _shapeList.Add(new Triangle
                     (
-                        ReadHelper.GetPoint(shape.FirstOrDefault(x => x.Key == "a").Value),
-                        ReadHelper.GetPoint(shape.FirstOrDefault(x => x.Key == "b").Value),
-                        ReadHelper.GetPoint(shape.FirstOrDefault(x => x.Key == "c").Value),
-                        shape.FirstOrDefault(x => x.Key == "isFilled").Value == "true",
+                        GetPoint(shape.FirstOrDefault(x => x.Key == "a").Value),
+                        GetPoint(shape.FirstOrDefault(x => x.Key == "b").Value),
+                        GetPoint(shape.FirstOrDefault(x => x.Key == "c").Value),
+                        shape.FirstOrDefault(x => x.Key == "filled").Value == "true",
                         color
                     ));
                 }
@@ -60,9 +61,9 @@ namespace VectorGraphicViewer.UI.Business.Service
                 {
                     _shapeList.Add(new Ellipse
                     (
-                        ReadHelper.GetPoint(shape.FirstOrDefault(x => x.Key == "center").Value),
+                        GetPoint(shape.FirstOrDefault(x => x.Key == "center").Value),
                         Convert.ToDouble((shape.FirstOrDefault(x => x.Key == "radius").Value)),
-                        shape.FirstOrDefault(x => x.Key == "isFilled").Value == "true",
+                        shape.FirstOrDefault(x => x.Key == "filled").Value == "true",
                         color
                     ));
                 }
@@ -71,6 +72,33 @@ namespace VectorGraphicViewer.UI.Business.Service
             return _shapeList;
         }
 
+        private static Point GetPoint(string coordinates)
+        {
+            string[] list = coordinates.Replace(",", ".").Split(';');
+            var defaultCulture = CultureInfo.GetCultureInfo("en-US");
+
+            double x = Convert.ToDouble(list[0], defaultCulture);
+            double y = Convert.ToDouble(list[1], defaultCulture);
+
+            return new Point(x, y);
+        }
+
+        private static Color GetColor(string colorString)
+        {
+            int[] colorArgb = new int[4];
+            int i = 0;
+
+            foreach (string s in colorString.Split(';'))
+            {
+                if (int.TryParse(s.Trim(), out var tempNumber) && i < 4)
+                {
+                    colorArgb[i] = tempNumber;
+                    i += 1;
+                }
+            }
+
+            return Color.FromArgb(colorArgb[0], colorArgb[1], colorArgb[2], colorArgb[3]);
+        }
 
 
         private static void TryDeserialize(string filePath)

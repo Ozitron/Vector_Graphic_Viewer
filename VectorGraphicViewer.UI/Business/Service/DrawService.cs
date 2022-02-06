@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
-using VectorGraphicViewer.UI.Helper;
+using VectorGraphicViewer.UI.Model;
 using VectorGraphicViewer.UI.Model.Base;
+using Ellipse = VectorGraphicViewer.UI.Model.Ellipse;
 
 namespace VectorGraphicViewer.UI.Business.Service
 {
@@ -18,80 +17,26 @@ namespace VectorGraphicViewer.UI.Business.Service
             var scaledShapes = new List<Shape>();
             var center = FindCartesianCenter(canvas);
             var scaleFactor = CalculateScaleFactor(canvas, shapes);
-
-            //GetCartesianPlaneLines();
-
-            // x line
-            scaledShapes.Add(new Line
-            {
-                Stroke = Brushes.Black,
-                X1 = canvas.X / 2,
-                X2 = canvas.X / 2,
-                Y1 = 0,
-                Y2 = canvas.Y,
-                StrokeThickness = 2
-            });
-
-            // y line
-            scaledShapes.Add(new Line
-            {
-                Stroke = Brushes.Black,
-                X1 = 0,
-                X2 = canvas.X,
-                Y1 = canvas.Y / 2,
-                Y2 = canvas.Y / 2,
-                StrokeThickness = 2
-            });
-
-            double number;
-            const double interval = 50.0;
-            // Draw X line and print scaled line numbers
-            int count = 1;
-            while (count * interval < canvas.X / 2.0)
-            {
-                // draw vertical dotted lines
-                scaledShapes.Add(new Line
-                {
-                    Stroke = Brushes.Black,
-                    X1 = center.X - count * interval,
-                    Y1 = 0,
-                    X2 = center.X - count * interval,
-                    Y2 = canvas.Y,
-                    StrokeThickness = 0.2
-                });
-
-                scaledShapes.Add(new Line
-                {
-                    Stroke = Brushes.Black,
-                    X1 = center.X + count * interval,
-                    Y1 = 0,
-                    X2 = center.X + count * interval,
-                    Y2 = canvas.Y,
-                    StrokeThickness = 0.2,
-                    
-                });
-                
-
-                // print line X numbers
-
-                count++;
-            }
-
+            
+            scaledShapes.AddRange(DrawCartesianLines(canvas, center, scaleFactor));
 
             if (shapes != null)
             {
                 foreach (var shape in shapes)
                 {
-                    if (shape is Model.Triangle triangle)
+                    var brush = new SolidColorBrush(Color.FromArgb(shape.Color.A, shape.Color.R, shape.Color.G, shape.Color.B));
+
+                    if (shape is Triangle triangle)
                     {
+
                         triangle.Points = SetPointArrayPosition(triangle.Points, center, scaleFactor);
 
                         var polygon = new Polygon();
-                        polygon.Stroke = Brushes.Black;
+                        polygon.Stroke = brush;
                         polygon.StrokeThickness = 2;
 
                         if (triangle.IsFilled)
-                            polygon.Fill = Brushes.Black;
+                            polygon.Fill = brush;
 
                         foreach (var point in triangle.Points)
                         {
@@ -100,14 +45,29 @@ namespace VectorGraphicViewer.UI.Business.Service
 
                         scaledShapes.Add(polygon);
                     }
-                    else if (shape is Model.Line line)
+                    else if (shape is Ellipse ellipseModel)
+                    {
+                        var scaledRadius = SetRadius(ellipseModel.Radius, scaleFactor);
+                        var ellipse = new EllipseGeometry
+                        {
+                            Center = SetPointPosition(ellipseModel.Center, center, scaleFactor),
+                            RadiusX = scaledRadius,
+                            RadiusY = scaledRadius
+                        };
+                        var path = new Path
+                        {
+                            Stroke = brush,
+                            Data = ellipse
+                        };
+                        scaledShapes.Add(path);
+                    }
+                    else if (shape is LinearShape line)
                     {
                         line.Points = SetPointArrayPosition(line.Points, center, scaleFactor);
 
-                        scaledShapes.Add(new Line
+                        scaledShapes.Add(new System.Windows.Shapes.Line
                         {
-                            // x line
-                            Stroke = Brushes.Black,
+                            Stroke = brush,
                             X1 = line.Points[0].X,
                             X2 = line.Points[1].X,
                             Y1 = line.Points[0].Y,
@@ -115,51 +75,99 @@ namespace VectorGraphicViewer.UI.Business.Service
                             StrokeThickness = 2
                         });
                     }
-
-
-                    //if (shape is ILinearShape)
-                    //{
-                    //    _linearShape = (ILinearShape)shape;
-
-                    //    _points = _linearShape.Points.ToArray();
-                    //    _points = DrawHelper.SetPointArrayPosition(_points, _center, _scaleFactor);
-
-                    //    DrawPolygon(_points);
-                    //}
-                    //else if (shape is IEllipticalShape)
-                    //{
-                    //    _ellipticalShape = (IEllipticalShape)shape;
-
-                    //    var shapeCenter = _ellipticalShape.Center;
-                    //    shapeCenter = DrawHelper.SetPointPosition(shapeCenter, _center, _scaleFactor);
-
-                    //    var radius = _ellipticalShape.Radius;
-                    //    radius = DrawHelper.SetRadius(radius, _scaleFactor);
-
-                    //    DrawCircle(shapeCenter, radius);
-                    //}
                 }
-
-
-
             }
-            //// Polygon
-            //var p = new Polygon();
-            //p.Stroke = Brushes.Black;
-            //p.Fill = Brushes.LightBlue;
-            //p.StrokeThickness = 2;
-            //p.Points = new PointCollection() { new Point(100, 100), new Point(45, 68), new Point(102, 135), new Point(220, 256) };
-            //_shapes.Add(p);
 
-            //// Elliptical
-            //var ellipse = new EllipseGeometry();
-            //ellipse.Center = new Point(150, 150);
-            //ellipse.RadiusX = 60;
-            //ellipse.RadiusY = 40;
-            //var path2 = new Path();
-            //path2.Stroke = Brushes.Red;
-            //path2.Data = ellipse;
-            //_shapes.Add(path2);
+            return scaledShapes;
+        }
+
+        internal static List<Shape> DrawCartesianLines(Point canvas, Point center, double scaleFactor)
+        {
+            var scaledShapes = new List<Shape>
+            {
+                // x line
+                new System.Windows.Shapes.Line
+                {
+                    Stroke = Brushes.Black,
+                    X1 = canvas.X / 2,
+                    X2 = canvas.X / 2,
+                    Y1 = 0,
+                    Y2 = canvas.Y,
+                    StrokeThickness = 2
+                },
+                // y line
+                new System.Windows.Shapes.Line
+                {
+                    Stroke = Brushes.Black,
+                    X1 = 0,
+                    X2 = canvas.X,
+                    Y1 = canvas.Y / 2,
+                    Y2 = canvas.Y / 2,
+                    StrokeThickness = 2
+                }
+            };
+
+            double number;
+            const double interval = 50.0;
+            // Draw X line and print scaled line numbers
+            int count = 1;
+            while (count * interval < canvas.X / 2.0)
+            {
+                // draw vertical dotted lines
+                scaledShapes.Add(new System.Windows.Shapes.Line
+                {
+                    Stroke = Brushes.Gray,
+                    X1 = center.X - count * interval,
+                    Y1 = 0,
+                    X2 = center.X - count * interval,
+                    Y2 = canvas.Y,
+                    StrokeThickness = 0.5
+                });
+
+                scaledShapes.Add(new System.Windows.Shapes.Line
+                {
+                    Stroke = Brushes.Gray,
+                    X1 = center.X + count * interval,
+                    Y1 = 0,
+                    X2 = center.X + count * interval,
+                    Y2 = canvas.Y,
+                    StrokeThickness = 0.5,
+
+                });
+
+                // TODO: line X numbers
+                count++;
+            }
+
+            // Draw Y line and print scaled line numbers
+            count = 1;
+            while (count * interval < canvas.Y / 2.0)
+            {
+                // draw vertical dotted lines
+                scaledShapes.Add(new System.Windows.Shapes.Line
+                {
+                    Stroke = Brushes.Gray,
+                    X1 = 0,
+                    Y1 = center.Y - (count * interval),
+                    X2 = canvas.X,
+                    Y2 = center.Y - (count * interval),
+                    StrokeThickness = 0.5
+                });
+
+                scaledShapes.Add(new System.Windows.Shapes.Line
+                {
+                    Stroke = Brushes.Gray,
+                    X1 = 0,
+                    Y1 = center.Y + (count * interval),
+                    X2 = canvas.X,
+                    Y2 = center.Y + (count * interval),
+                    StrokeThickness = 0.5,
+
+                });
+
+                // TODO: line Y numbers
+                count++;
+            }
 
             return scaledShapes;
         }
@@ -176,7 +184,7 @@ namespace VectorGraphicViewer.UI.Business.Service
 
             foreach (var shape in shapeList)
             {
-                if (shape is ILine linearShape)
+                if (shape is ILinearShape linearShape)
                 {
                     xMaxTemp = linearShape.Points.Select(max => Math.Abs(max.X)).Max();
                     if (xMaxTemp > xMax)
@@ -186,7 +194,7 @@ namespace VectorGraphicViewer.UI.Business.Service
                     if (yMaxTemp > yMax)
                         yMax = yMaxTemp;
                 }
-                else if (shape is Model.Ellipse ellipticalShape)
+                else if (shape is Ellipse ellipticalShape)
                 {
                     if (ellipticalShape.Radius > xMax) xMax = ellipticalShape.Radius;
                     if (ellipticalShape.Radius > yMax) yMax = ellipticalShape.Radius;
@@ -224,7 +232,7 @@ namespace VectorGraphicViewer.UI.Business.Service
 
         public static Point FindCartesianCenter(Point canvas) => new(canvas.X / 2.0, canvas.Y / 2.0);
 
-
+        internal static double SetRadius(double radius, double scaleFactor) => radius * scaleFactor;
 
     }
 }

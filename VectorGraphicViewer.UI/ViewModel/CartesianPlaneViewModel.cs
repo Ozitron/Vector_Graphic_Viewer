@@ -2,12 +2,10 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Shapes;
 using VectorGraphicViewer.UI.Business.Service;
 using VectorGraphicViewer.UI.Command;
 using VectorGraphicViewer.UI.Model.Base;
-using Line = System.Windows.Shapes.Line;
 
 namespace VectorGraphicViewer.UI.ViewModel
 {
@@ -69,7 +67,7 @@ namespace VectorGraphicViewer.UI.ViewModel
         private void OnGridChanged(string name)
         {
             OnPropertyChanged(name);
-            
+
             ScaledShapes.Clear();
             DrawScaledShapes();
 
@@ -95,6 +93,7 @@ namespace VectorGraphicViewer.UI.ViewModel
 
         private void ClearButtonClick()
         {
+            if (_shapes != null) _shapes.Clear();
             ScaledShapes.Clear();
             DrawScaledShapes();
             DestinationPath = string.Empty;

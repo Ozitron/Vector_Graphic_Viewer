@@ -1,9 +1,9 @@
-﻿using System.Drawing;
-using Point = System.Windows.Point;
+﻿using Point = System.Windows.Point;
 
-namespace VectorGraphicViewer.UI.Model.Base;
-
-internal interface ILinearShape : ILine
+namespace VectorGraphicViewer.UI.Model.Base
 {
-    bool IsFilled { get; }
+    internal interface ILinearShape : IShape
+    {
+        Point[] Points { get; }
+    }
 }

@@ -4,12 +4,10 @@ using Point = System.Windows.Point;
 
 namespace VectorGraphicViewer.UI.Model
 {
-    internal class Triangle : ILine
+    internal class Triangle : ILinearShape
     {
-
         public Color Color { get; }
         public bool IsFilled { get; }
-
         public Point[] Points { get; set; }
 
         public Triangle(Point a, Point b, Point c, bool isFilled, Color color)
@@ -18,6 +16,5 @@ namespace VectorGraphicViewer.UI.Model
             IsFilled = isFilled;
             Color = color;
         }
-
     }
 }

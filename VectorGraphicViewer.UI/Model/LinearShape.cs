@@ -4,12 +4,12 @@ using Point = System.Windows.Point;
 
 namespace VectorGraphicViewer.UI.Model
 {
-    internal class Line : ILine
+    internal class LinearShape : ILinearShape
     {
         public Point[] Points { get; set; }
         public Color Color { get; set; }
 
-        public Line(Point a, Point b, Color color)
+        public LinearShape(Point a, Point b, Color color)
         {
             Points = new Point[2] { a, b };
             Color = color;
