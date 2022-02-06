@@ -1,71 +1,66 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
-using System.Linq;
-using System.Text.Json;
+using VectorGraphicViewer.UI.Helper;
 using VectorGraphicViewer.UI.Model;
 using VectorGraphicViewer.UI.Model.Base;
 using Point = System.Windows.Point;
+using Line = VectorGraphicViewer.UI.Model.LinearShape;
 
 namespace VectorGraphicViewer.UI.Business.Service
 {
     public class ReadService : IReadService
     {
-        private readonly List<IShape> _shapeList = new();
+        private static List<IShape> _shapeList = null!;
 
         List<IShape> IReadService.Read(string filePath)
         {
             if (string.IsNullOrEmpty(filePath))
                 return _shapeList;
 
-            _shapeList.Clear();
-            using var reader = new StreamReader(filePath);
-            var rawData = reader.ReadToEnd().ToLower();
-            rawData = rawData.Replace("true", "\"true\""); // TEMP fix
-            rawData = rawData.Replace("false", "\"false\""); // TEMP fix
-            rawData = rawData.Replace(".", ","); // TEMP fix
-
-            using var doc = JsonDocument.Parse(rawData);
-            var root = doc.RootElement;
-
-            var shapes = root.EnumerateArray();
-
-            while (shapes.MoveNext())
+            if (Path.GetExtension(filePath) == "." + Enum.GetName(FileType.json))
             {
-                var shape = shapes.Current.Deserialize<Dictionary<string, string>>();
-                var color = GetColor(shape.FirstOrDefault(x => x.Key == "color").Value);
+                return ReadJsonData(filePath);
+            }
 
-                if (shape.First(x => x.Key == "type").Value == "line")
+            throw new NotImplementedException();
+        }
+
+        private static List<IShape> ReadJsonData(string filePath)
+        {
+            using var reader = new StreamReader(filePath);
+            var data = reader.ReadToEnd().ToLower();
+            var jsonData = JsonConvert.DeserializeObject<dynamic>(data);
+            _shapeList = new List<IShape>();
+
+            foreach (var shape in jsonData)
+            {
+                var color = GetColor((string)shape.color.Value);
+
+                if (shape.type.Value == Enum.GetName(Shape.line))
                 {
-                    _shapeList.Add(new LinearShape
-                    (
-                        GetPoint(shape.FirstOrDefault(x => x.Key == "a").Value),
-                        GetPoint(shape.FirstOrDefault(x => x.Key == "b").Value),
-                        color
-                    ));
+                    _shapeList.Add(new Line(GetPoint(shape.a.Value), GetPoint(shape.b.Value), color));
                 }
-                else if (shape.FirstOrDefault(x => x.Key == "type").Value == "triangle")
+                else if (shape.type.Value == Enum.GetName(Shape.triangle))
                 {
-                    _shapeList.Add(new Triangle
-                    (
-                        GetPoint(shape.FirstOrDefault(x => x.Key == "a").Value),
-                        GetPoint(shape.FirstOrDefault(x => x.Key == "b").Value),
-                        GetPoint(shape.FirstOrDefault(x => x.Key == "c").Value),
-                        shape.FirstOrDefault(x => x.Key == "filled").Value == "true",
-                        color
-                    ));
+                    bool isFilled = shape.filled == true;
+                    _shapeList.Add(new Triangle(
+                        GetPoint(shape.a.Value),
+                        GetPoint(shape.b.Value),
+                        GetPoint(shape.c.Value),
+                        isFilled,
+                        color));
                 }
-                else if (shape.FirstOrDefault(x => x.Key == "type").Value == "circle")
+                else if (shape.type.Value == Enum.GetName(Shape.circle))
                 {
-                    _shapeList.Add(new Ellipse
-                    (
-                        GetPoint(shape.FirstOrDefault(x => x.Key == "center").Value),
-                        Convert.ToDouble((shape.FirstOrDefault(x => x.Key == "radius").Value)),
-                        shape.FirstOrDefault(x => x.Key == "filled").Value == "true",
-                        color
-                    ));
+                    var isFilled = shape.filled == true;
+                    var radius = (float)shape.radius.Value;
+                    var center = GetPoint(shape.center.Value);
+
+                    _shapeList.Add(new Ellipse(center, radius, isFilled, color));
                 }
             }
 
@@ -74,21 +69,21 @@ namespace VectorGraphicViewer.UI.Business.Service
 
         private static Point GetPoint(string coordinates)
         {
-            string[] list = coordinates.Replace(",", ".").Split(';');
+            var list = coordinates.Replace(",", ".").Split(';');
             var defaultCulture = CultureInfo.GetCultureInfo("en-US");
 
-            double x = Convert.ToDouble(list[0], defaultCulture);
-            double y = Convert.ToDouble(list[1], defaultCulture);
+            var x = Convert.ToDouble(list[0], defaultCulture);
+            var y = Convert.ToDouble(list[1], defaultCulture);
 
             return new Point(x, y);
         }
 
         private static Color GetColor(string colorString)
         {
-            int[] colorArgb = new int[4];
-            int i = 0;
+            var colorArgb = new int[4];
+            var i = 0;
 
-            foreach (string s in colorString.Split(';'))
+            foreach (var s in colorString.Split(';'))
             {
                 if (int.TryParse(s.Trim(), out var tempNumber) && i < 4)
                 {
@@ -99,38 +94,5 @@ namespace VectorGraphicViewer.UI.Business.Service
 
             return Color.FromArgb(colorArgb[0], colorArgb[1], colorArgb[2], colorArgb[3]);
         }
-
-
-        private static void TryDeserialize(string filePath)
-        {
-            var options = new JsonSerializerOptions
-            {
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-            };
-
-
-            string fileName = filePath;
-            string jsonString = File.ReadAllText(fileName);
-            TriangleModel test = JsonSerializer.Deserialize<TriangleModel>(jsonString, options)!;
-        }
     }
-
-    public class LineModel
-    {
-        public string Type { get; set; }
-        public string A { get; set; }
-        public string B { get; set; }
-        public string Color { get; set; }
-    }
-
-    public class TriangleModel
-    {
-        public string Type { get; set; }
-        public string A { get; set; }
-        public string B { get; set; }
-        public string C { get; set; }
-        public string Filled { get; set; }
-        public string Color { get; set; }
-    }
-
 }

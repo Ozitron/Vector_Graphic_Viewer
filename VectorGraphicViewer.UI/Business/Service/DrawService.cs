@@ -112,7 +112,7 @@ namespace VectorGraphicViewer.UI.Business.Service
             double number;
             const double interval = 50.0;
             // Draw X line and print scaled line numbers
-            int count = 1;
+            var count = 1;
             while (count * interval < canvas.X / 2.0)
             {
                 // draw vertical dotted lines

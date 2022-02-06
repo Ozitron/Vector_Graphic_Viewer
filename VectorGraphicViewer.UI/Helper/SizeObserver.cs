@@ -25,7 +25,7 @@ namespace VectorGraphicViewer.UI.Helper
         static void OnObserveChanged(
           DependencyObject depObj, DependencyPropertyChangedEventArgs e)
         {
-            FrameworkElement elem = depObj as FrameworkElement;
+            var elem = depObj as FrameworkElement;
             if (elem == null)
                 return;
 
@@ -43,7 +43,7 @@ namespace VectorGraphicViewer.UI.Helper
             if (!Object.ReferenceEquals(sender, e.OriginalSource))
                 return;
 
-            FrameworkElement elem = e.OriginalSource as FrameworkElement;
+            var elem = e.OriginalSource as FrameworkElement;
             if (elem != null)
             {
                 SetObservedWidth(elem, elem.ActualWidth);
