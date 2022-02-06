@@ -16,13 +16,14 @@ namespace VectorGraphicViewer.UI.ViewModel
         private double _canvasWidth;
         private double _canvasHeight;
         private List<IShape> _shapes;
-        private ObservableCollection<Shape> _scaledShapes;
+        private ObservableCollection<object> _scaledShapes;
         private readonly IReadService _readService;
         private readonly IDrawService _drawService;
+        private bool _isScaled;
 
         #endregion
 
-        public ObservableCollection<Shape> ScaledShapes
+        public ObservableCollection<object> ScaledShapes
         {
             get => _scaledShapes;
             set
@@ -43,8 +44,10 @@ namespace VectorGraphicViewer.UI.ViewModel
             set
             {
                 _canvasWidth = value;
-                if (value > 0)
+                if (value > 0 && _isScaled)
                     OnGridChanged(nameof(CanvasWidth));
+
+                _isScaled = !_isScaled;
             }
         }
 
@@ -54,8 +57,10 @@ namespace VectorGraphicViewer.UI.ViewModel
             set
             {
                 _canvasHeight = value;
-                if (value > 0)
+                if (value > 0 && _isScaled)
                     OnGridChanged(nameof(CanvasHeight));
+
+                _isScaled = !_isScaled;
             }
         }
 
@@ -66,11 +71,8 @@ namespace VectorGraphicViewer.UI.ViewModel
 
         private void OnGridChanged(string name)
         {
-            OnPropertyChanged(name);
-
             ScaledShapes.Clear();
             DrawScaledShapes();
-
         }
 
         private void ReadButtonClick()
@@ -78,15 +80,14 @@ namespace VectorGraphicViewer.UI.ViewModel
             DrawScaledShapes();
             ReadShapes(DestinationPath);
             DrawScaledShapes();
-
-            //DrawCartesianCoordinates();
+            
         }
 
         public CartesianPlaneViewModel()
         {
             _readService = new ReadService();
             _drawService = new DrawService();
-            _scaledShapes = new ObservableCollection<Shape>();
+            _scaledShapes = new ObservableCollection<object>();
             ReadCommand = new RelayCommand(o => ReadButtonClick());
             ClearCommand = new RelayCommand(o => ClearButtonClick());
         }
@@ -103,9 +104,10 @@ namespace VectorGraphicViewer.UI.ViewModel
 
         private void DrawScaledShapes()
         {
+            ScaledShapes.Clear();
             var shapes = _drawService.GetScaledShapes(_shapes, new Point(CanvasWidth, CanvasHeight));
             shapes.AddRange(_scaledShapes);
-            ScaledShapes = new ObservableCollection<Shape>(shapes);
+            ScaledShapes = new ObservableCollection<object>(shapes);
         }
     }
 }

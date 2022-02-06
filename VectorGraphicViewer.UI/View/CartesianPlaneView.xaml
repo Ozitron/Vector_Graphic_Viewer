@@ -7,7 +7,7 @@
         xmlns:viewModel="clr-namespace:VectorGraphicViewer.UI.ViewModel"
         xmlns:helper="clr-namespace:VectorGraphicViewer.UI.Helper"
         mc:Ignorable="d"
-        Title="Vector Graphic Viewer" Height="480" Width="600" MinHeight="240" MinWidth="320" Background="WhiteSmoke">
+        Title="Vector Graphic Viewer" Height="520" Width="600" MinHeight="240" MinWidth="320" Background="WhiteSmoke">
     <Window.DataContext>
         <viewModel:CartesianPlaneViewModel/>
     </Window.DataContext>
@@ -28,9 +28,9 @@
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <Grid Margin="5,3,5,5" Background="White" 
-                                helper:SizeObserver.Observe="True"
-                                helper:SizeObserver.ObservedWidth="{Binding CanvasWidth, Mode=OneWayToSource}"
-                                helper:SizeObserver.ObservedHeight="{Binding CanvasHeight, Mode=OneWayToSource}"/>
+                              helper:SizeObserver.Observe="True"
+                              helper:SizeObserver.ObservedWidth="{Binding CanvasWidth, Mode=OneWayToSource}"
+                              helper:SizeObserver.ObservedHeight="{Binding CanvasHeight, Mode=OneWayToSource}"/>
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
             </ItemsControl>

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using VectorGraphicViewer.UI.Model;
@@ -12,12 +13,12 @@ namespace VectorGraphicViewer.UI.Business.Service
 {
     internal class DrawService : IDrawService
     {
-        public List<Shape> GetScaledShapes(List<IShape> shapes, Point canvas)
+        public List<object> GetScaledShapes(List<IShape> shapes, Point canvas)
         {
-            var scaledShapes = new List<Shape>();
+            var scaledShapes = new List<object>();
             var center = FindCartesianCenter(canvas);
             var scaleFactor = CalculateScaleFactor(canvas, shapes);
-            
+
             scaledShapes.AddRange(DrawCartesianLines(canvas, center, scaleFactor));
 
             if (shapes != null)
@@ -82,9 +83,9 @@ namespace VectorGraphicViewer.UI.Business.Service
             return scaledShapes;
         }
 
-        internal static List<Shape> DrawCartesianLines(Point canvas, Point center, double scaleFactor)
+        internal static List<object> DrawCartesianLines(Point canvas, Point center, double scaleFactor)
         {
-            var scaledShapes = new List<Shape>
+            var scaledShapes = new List<object>
             {
                 // x line
                 new Line
@@ -115,28 +116,39 @@ namespace VectorGraphicViewer.UI.Business.Service
             while (count * interval < canvas.X / 2.0)
             {
                 // draw vertical dotted lines
-                scaledShapes.Add(new System.Windows.Shapes.Line
+                scaledShapes.Add(new Line
                 {
                     Stroke = Brushes.Gray,
                     X1 = center.X - count * interval,
                     Y1 = 0,
                     X2 = center.X - count * interval,
                     Y2 = canvas.Y,
-                    StrokeThickness = 0.5
+                    StrokeThickness = 0.2
                 });
-
-                scaledShapes.Add(new System.Windows.Shapes.Line
+                scaledShapes.Add(new Line
                 {
                     Stroke = Brushes.Gray,
                     X1 = center.X + count * interval,
                     Y1 = 0,
                     X2 = center.X + count * interval,
                     Y2 = canvas.Y,
-                    StrokeThickness = 0.5,
+                    StrokeThickness = 0.2,
 
                 });
 
-                // TODO: line X numbers
+                // print line X numbers
+                number = (count * interval / scaleFactor);
+                scaledShapes.Add(new Label
+                {
+                    Content = $"{number:0.0}",
+                    Margin = new Thickness((center.X + (count * interval)) - 15, center.Y, 0, 0)
+                });
+                scaledShapes.Add(new Label
+                {
+                    Content = $"{number:0.0}",
+                    Margin = new Thickness((center.X - (count * interval)) - 15, center.Y, 0, 0)
+                });
+
                 count++;
             }
 
@@ -152,9 +164,8 @@ namespace VectorGraphicViewer.UI.Business.Service
                     Y1 = center.Y - (count * interval),
                     X2 = canvas.X,
                     Y2 = center.Y - (count * interval),
-                    StrokeThickness = 0.5
+                    StrokeThickness = 0.2
                 });
-
                 scaledShapes.Add(new System.Windows.Shapes.Line
                 {
                     Stroke = Brushes.Gray,
@@ -162,11 +173,23 @@ namespace VectorGraphicViewer.UI.Business.Service
                     Y1 = center.Y + (count * interval),
                     X2 = canvas.X,
                     Y2 = center.Y + (count * interval),
-                    StrokeThickness = 0.5,
+                    StrokeThickness = 0.2,
 
                 });
 
-                // TODO: line Y numbers
+                // print line Y numbers
+                number = (count * interval / scaleFactor);
+                scaledShapes.Add(new Label
+                {
+                    Content = $"{number:0.0}",
+                    Margin = new Thickness(center.X, center.Y - (count * interval) - 12, 0, 0)
+                });
+                scaledShapes.Add(new Label
+                {
+                    Content = $"{number:0.0}",
+                    Margin = new Thickness(center.X, center.Y + (count * interval) - 12, 0, 0)
+                });
+
                 count++;
             }
 
@@ -176,7 +199,7 @@ namespace VectorGraphicViewer.UI.Business.Service
         internal static double CalculateScaleFactor(Point center, IList<IShape> shapeList)
         {
             if (shapeList == null || shapeList.Count == 0)
-                return 1;
+                return 50;
 
             double xMax = 0;
             double yMax = 0;

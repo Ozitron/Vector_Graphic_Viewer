@@ -11,7 +11,7 @@ namespace VectorGraphicViewer.UI.Model
 
         public LinearShape(Point a, Point b, Color color)
         {
-            Points = new Point[2] { a, b };
+            Points = new[] { a, b };
             Color = color;
         }
     }
