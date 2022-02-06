@@ -28,8 +28,8 @@ namespace VectorGraphicViewer.UI.Business.Service
 
                     if (shape is Triangle triangle)
                     {
-
-                        triangle.Points = SetPointArrayPosition(triangle.Points, center, scaleFactor);
+                        var points = triangle.Points.ToArray();
+                        points = SetPointArrayPosition(points, center, scaleFactor);
 
                         var polygon = new Polygon();
                         polygon.Stroke = brush;
@@ -38,7 +38,7 @@ namespace VectorGraphicViewer.UI.Business.Service
                         if (triangle.IsFilled)
                             polygon.Fill = brush;
 
-                        foreach (var point in triangle.Points)
+                        foreach (var point in points)
                         {
                             polygon.Points.Add(point);
                         }
@@ -63,15 +63,16 @@ namespace VectorGraphicViewer.UI.Business.Service
                     }
                     else if (shape is LinearShape line)
                     {
-                        line.Points = SetPointArrayPosition(line.Points, center, scaleFactor);
+                        var points = line.Points.ToArray();
+                        points = SetPointArrayPosition(points, center, scaleFactor);
 
-                        scaledShapes.Add(new System.Windows.Shapes.Line
+                        scaledShapes.Add(new Line
                         {
                             Stroke = brush,
-                            X1 = line.Points[0].X,
-                            X2 = line.Points[1].X,
-                            Y1 = line.Points[0].Y,
-                            Y2 = line.Points[1].Y,
+                            X1 = points[0].X,
+                            X2 = points[1].X,
+                            Y1 = points[0].Y,
+                            Y2 = points[1].Y,
                             StrokeThickness = 2
                         });
                     }
@@ -86,7 +87,7 @@ namespace VectorGraphicViewer.UI.Business.Service
             var scaledShapes = new List<Shape>
             {
                 // x line
-                new System.Windows.Shapes.Line
+                new Line
                 {
                     Stroke = Brushes.Black,
                     X1 = canvas.X / 2,
@@ -96,7 +97,7 @@ namespace VectorGraphicViewer.UI.Business.Service
                     StrokeThickness = 2
                 },
                 // y line
-                new System.Windows.Shapes.Line
+                new Line
                 {
                     Stroke = Brushes.Black,
                     X1 = 0,
