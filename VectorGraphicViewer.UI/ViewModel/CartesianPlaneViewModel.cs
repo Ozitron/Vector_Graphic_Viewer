@@ -8,7 +8,7 @@ using VectorGraphicViewer.UI.Service;
 
 namespace VectorGraphicViewer.UI.ViewModel
 {
-    internal class CartesianPlaneViewModel : ViewModelBase
+    public class CartesianPlaneViewModel : ViewModelBase
     {
         #region Fields
 
@@ -81,7 +81,13 @@ namespace VectorGraphicViewer.UI.ViewModel
 
         #region PrivateMethods
 
-        private async void ReadShapes(string filePath)
+        public List<IShape> Shapes
+        {
+            get => _shapes;
+            set { _shapes = value; }
+        }
+
+        public async void ReadShapes(string filePath)
         {
             _shapes = await _readService.Read(filePath);
         }
