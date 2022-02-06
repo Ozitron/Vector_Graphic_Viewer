@@ -4,11 +4,10 @@ using System.Drawing;
 using System.Globalization;
 using System.IO;
 using Newtonsoft.Json;
-using VectorGraphicViewer.UI.Helper;
 using VectorGraphicViewer.UI.Model;
 using VectorGraphicViewer.UI.Model.Base;
+using VectorGraphicViewer.UI.Util;
 using Point = System.Windows.Point;
-using Line = VectorGraphicViewer.UI.Model.LinearShape;
 
 namespace VectorGraphicViewer.UI.Service
 {
@@ -42,22 +41,20 @@ namespace VectorGraphicViewer.UI.Service
 
                 if (shape.type.Value == Enum.GetName(Shape.line))
                 {
-                    _shapeList.Add(new Line(GetPoint(shape.a.Value), GetPoint(shape.b.Value), color));
+                    _shapeList.Add(new Line(new Point[] { GetPoint(shape.a.Value), GetPoint(shape.b.Value) }, color));
                 }
                 else if (shape.type.Value == Enum.GetName(Shape.triangle))
                 {
                     bool isFilled = shape.filled == true;
                     _shapeList.Add(new Triangle(
-                        GetPoint(shape.a.Value),
-                        GetPoint(shape.b.Value),
-                        GetPoint(shape.c.Value),
-                        isFilled,
-                        color));
+                        new Point[] { GetPoint(shape.a.Value), GetPoint(shape.b.Value), GetPoint(shape.c.Value) },
+                        color,
+                        isFilled));
                 }
                 else if (shape.type.Value == Enum.GetName(Shape.circle))
                 {
                     var isFilled = shape.filled == true;
-                    var radius = (float)shape.radius.Value;
+                    var radius = (double)shape.radius.Value;
                     var center = GetPoint(shape.center.Value);
 
                     _shapeList.Add(new Ellipse(center, radius, isFilled, color));

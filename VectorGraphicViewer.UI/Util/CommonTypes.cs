@@ -1,4 +1,4 @@
-﻿namespace VectorGraphicViewer.UI.Helper
+﻿namespace VectorGraphicViewer.UI.Util
 {
     internal enum Shape
     {

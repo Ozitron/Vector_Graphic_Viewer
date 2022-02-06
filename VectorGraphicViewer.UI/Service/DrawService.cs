@@ -4,9 +4,8 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using System.Windows.Shapes;
-using VectorGraphicViewer.UI.Model;
 using VectorGraphicViewer.UI.Model.Base;
+using VectorGraphicViewer.UI.Util;
 using Ellipse = VectorGraphicViewer.UI.Model.Ellipse;
 
 namespace VectorGraphicViewer.UI.Service
@@ -16,67 +15,18 @@ namespace VectorGraphicViewer.UI.Service
         public List<object> GetScaledShapes(List<IShape> shapes, Point canvas)
         {
             var scaledShapes = new List<object>();
-            var center = FindCartesianCenter(canvas);
+            var canvasCenter = GeometryUtil.GetCartesianCenter(canvas);
             var scaleFactor = CalculateScaleFactor(canvas, shapes);
 
-            scaledShapes.AddRange(DrawCartesianLines(canvas, center, scaleFactor));
+            scaledShapes.AddRange(DrawCartesianLines(canvas, canvasCenter, scaleFactor));
 
             if (shapes != null)
             {
                 foreach (var shape in shapes)
                 {
                     var brush = new SolidColorBrush(Color.FromArgb(shape.Color.A, shape.Color.R, shape.Color.G, shape.Color.B));
-
-                    if (shape is Triangle triangle)
-                    {
-                        var points = triangle.Points.ToArray();
-                        points = SetPointArrayPosition(points, center, scaleFactor);
-
-                        var polygon = new Polygon();
-                        polygon.Stroke = brush;
-                        polygon.StrokeThickness = 2;
-
-                        if (triangle.IsFilled)
-                            polygon.Fill = brush;
-
-                        foreach (var point in points)
-                        {
-                            polygon.Points.Add(point);
-                        }
-
-                        scaledShapes.Add(polygon);
-                    }
-                    else if (shape is Ellipse ellipseModel)
-                    {
-                        var scaledRadius = SetRadius(ellipseModel.Radius, scaleFactor);
-                        var ellipse = new EllipseGeometry
-                        {
-                            Center = SetPointPosition(ellipseModel.Center, center, scaleFactor),
-                            RadiusX = scaledRadius,
-                            RadiusY = scaledRadius
-                        };
-                        var path = new Path
-                        {
-                            Stroke = brush,
-                            Data = ellipse
-                        };
-                        scaledShapes.Add(path);
-                    }
-                    else if (shape is LinearShape line)
-                    {
-                        var points = line.Points.ToArray();
-                        points = SetPointArrayPosition(points, center, scaleFactor);
-
-                        scaledShapes.Add(new Line
-                        {
-                            Stroke = brush,
-                            X1 = points[0].X,
-                            X2 = points[1].X,
-                            Y1 = points[0].Y,
-                            Y2 = points[1].Y,
-                            StrokeThickness = 2
-                        });
-                    }
+                    
+                    scaledShapes.Add(shape.GetRelativeShape(canvasCenter, scaleFactor, brush));
                 }
             }
 
@@ -88,7 +38,7 @@ namespace VectorGraphicViewer.UI.Service
             var scaledShapes = new List<object>
             {
                 // x line
-                new Line
+                new System.Windows.Shapes.Line
                 {
                     Stroke = Brushes.Black,
                     X1 = canvas.X / 2,
@@ -98,7 +48,7 @@ namespace VectorGraphicViewer.UI.Service
                     StrokeThickness = 2
                 },
                 // y line
-                new Line
+                new System.Windows.Shapes.Line
                 {
                     Stroke = Brushes.Black,
                     X1 = 0,
@@ -116,7 +66,7 @@ namespace VectorGraphicViewer.UI.Service
             while (count * interval < canvas.X / 2.0)
             {
                 // draw vertical dotted lines
-                scaledShapes.Add(new Line
+                scaledShapes.Add(new System.Windows.Shapes.Line
                 {
                     Stroke = Brushes.Gray,
                     X1 = center.X - count * interval,
@@ -125,7 +75,7 @@ namespace VectorGraphicViewer.UI.Service
                     Y2 = canvas.Y,
                     StrokeThickness = 0.2
                 });
-                scaledShapes.Add(new Line
+                scaledShapes.Add(new System.Windows.Shapes.Line
                 {
                     Stroke = Brushes.Gray,
                     X1 = center.X + count * interval,
@@ -208,7 +158,7 @@ namespace VectorGraphicViewer.UI.Service
 
             foreach (var shape in shapeList)
             {
-                if (shape is ILinearShape linearShape)
+                if (shape is LinearShape linearShape)
                 {
                     xMaxTemp = linearShape.Points.Select(max => Math.Abs(max.X)).Max();
                     if (xMaxTemp > xMax)
@@ -236,27 +186,7 @@ namespace VectorGraphicViewer.UI.Service
             return xMaxTemp * 0.95;
         }
 
-        private static Point[] SetPointArrayPosition(Point[] points, Point center, double scaleFactor)
-        {
-            for (var i = 0; i < points.Length; i++)
-            {
-                points[i] = SetPointPosition(points[i], center, scaleFactor);
-            }
 
-            return points;
-        }
-
-        private static Point SetPointPosition(Point point, Point center, double scaleFactor)
-        {
-            point.X = (point.X * scaleFactor) + center.X;
-            point.Y = (center.Y) - (point.Y * scaleFactor);
-
-            return point;
-        }
-
-        public static Point FindCartesianCenter(Point canvas) => new(canvas.X / 2.0, canvas.Y / 2.0);
-
-        internal static double SetRadius(double radius, double scaleFactor) => radius * scaleFactor;
 
     }
 }

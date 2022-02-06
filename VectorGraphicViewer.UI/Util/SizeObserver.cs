@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows;
 
-namespace VectorGraphicViewer.UI.Helper
+namespace VectorGraphicViewer.UI.Util
 {
     internal static class SizeObserver
     {

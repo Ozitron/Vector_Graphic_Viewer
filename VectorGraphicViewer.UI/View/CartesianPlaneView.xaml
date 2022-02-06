@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:VectorGraphicViewer.UI.View"
         xmlns:viewModel="clr-namespace:VectorGraphicViewer.UI.ViewModel"
-        xmlns:helper="clr-namespace:VectorGraphicViewer.UI.Helper"
+        xmlns:util="clr-namespace:VectorGraphicViewer.UI.Util"
         mc:Ignorable="d"
         Title="Vector Graphic Viewer" Height="520" Width="600" MinHeight="240" MinWidth="320" Background="WhiteSmoke">
     <Window.DataContext>
@@ -28,9 +28,9 @@
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <Grid Margin="5,3,5,5" Background="White" 
-                              helper:SizeObserver.Observe="True"
-                              helper:SizeObserver.ObservedWidth="{Binding CanvasWidth, Mode=OneWayToSource}"
-                              helper:SizeObserver.ObservedHeight="{Binding CanvasHeight, Mode=OneWayToSource}"/>
+                              util:SizeObserver.Observe="True"
+                              util:SizeObserver.ObservedWidth="{Binding CanvasWidth, Mode=OneWayToSource}"
+                              util:SizeObserver.ObservedHeight="{Binding CanvasHeight, Mode=OneWayToSource}"/>
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
             </ItemsControl>
