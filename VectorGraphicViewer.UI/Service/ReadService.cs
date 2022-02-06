@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
@@ -8,13 +7,14 @@ using Newtonsoft.Json;
 using VectorGraphicViewer.UI.Model;
 using VectorGraphicViewer.UI.Model.Base;
 using VectorGraphicViewer.UI.Util;
+using Color = System.Drawing.Color;
 using Point = System.Windows.Point;
 
 namespace VectorGraphicViewer.UI.Service
 {
     public class ReadService : IReadService
     {
-        private static List<IShape> _shapeList = null!;
+        private List<IShape> _shapeList = null!;
 
         async Task<List<IShape>> IReadService.Read(string filePath)
         {
@@ -29,14 +29,9 @@ namespace VectorGraphicViewer.UI.Service
             throw new NotImplementedException();
         }
 
-        private static async Task<List<IShape>> ReadJsonData(string filePath)
+        private void ReadJsonDataWithParallel(IEnumerable<dynamic> jsonData)
         {
-            using var reader = new StreamReader(filePath);
-            var data = reader.ReadToEnd().ToLower();
-            var jsonData = JsonConvert.DeserializeObject<dynamic>(data);
-            _shapeList = new List<IShape>();
-
-            foreach (var shape in jsonData)
+            Parallel.ForEach(jsonData, shape =>
             {
                 var color = GetColor((string)shape.color.Value);
 
@@ -60,7 +55,17 @@ namespace VectorGraphicViewer.UI.Service
 
                     _shapeList.Add(new Ellipse(center, radius, isFilled, color));
                 }
-            }
+            });
+        }
+
+        private async Task<List<IShape>> ReadJsonData(string filePath)
+        {
+            using var reader = new StreamReader(filePath);
+            var data = reader.ReadToEnd().ToLower();
+            var jsonData = JsonConvert.DeserializeObject<dynamic>(data);
+            _shapeList = new List<IShape>();
+
+            ReadJsonDataWithParallel(jsonData);
 
             return await Task.FromResult(_shapeList);
         }
