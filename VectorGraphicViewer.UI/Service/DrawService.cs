@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -12,7 +13,7 @@ namespace VectorGraphicViewer.UI.Service
 {
     internal class DrawService : IDrawService
     {
-        public List<object> GetScaledShapes(List<IShape> shapes, Point canvas)
+        public Task<List<object>> GetScaledShapes(List<IShape> shapes, Point canvas)
         {
             var scaledShapes = new List<object>();
             var canvasCenter = GeometryUtil.GetCartesianCenter(canvas);
@@ -30,7 +31,7 @@ namespace VectorGraphicViewer.UI.Service
                 }
             }
 
-            return scaledShapes;
+            return Task.FromResult(scaledShapes);
         }
 
         internal static List<object> DrawCartesianLines(Point canvas, Point center, double scaleFactor)

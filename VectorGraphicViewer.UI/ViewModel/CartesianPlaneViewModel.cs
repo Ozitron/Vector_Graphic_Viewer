@@ -10,7 +10,7 @@ namespace VectorGraphicViewer.UI.ViewModel
 {
     internal class CartesianPlaneViewModel : ViewModelBase
     {
-        #region fields
+        #region Fields
 
         private double _canvasWidth;
         private double _canvasHeight;
@@ -22,6 +22,8 @@ namespace VectorGraphicViewer.UI.ViewModel
 
         #endregion
 
+        #region Properties
+
         public ObservableCollection<object> ScaledShapes
         {
             get => _scaledShapes;
@@ -31,9 +33,6 @@ namespace VectorGraphicViewer.UI.ViewModel
                 OnPropertyChanged(nameof(ScaledShapes));
             }
         }
-
-        public ICommand ReadCommand { get; set; }
-        public ICommand ClearCommand { get; set; }
 
         public string DestinationPath { get; set; }
 
@@ -63,9 +62,28 @@ namespace VectorGraphicViewer.UI.ViewModel
             }
         }
 
-        private void ReadShapes(string filePath)
+        public ICommand ReadCommand { get; set; }
+        public ICommand ClearCommand { get; set; }
+
+        #endregion
+
+        #region Constructor
+        public CartesianPlaneViewModel()
         {
-            _shapes = _readService.Read(filePath);
+            _readService = new ReadService();
+            _drawService = new DrawService();
+            _scaledShapes = new ObservableCollection<object>();
+            ReadCommand = new RelayCommand(o => ReadButtonClick());
+            ClearCommand = new RelayCommand(o => ClearButtonClick());
+        }
+
+        #endregion
+
+        #region PrivateMethods
+
+        private async void ReadShapes(string filePath)
+        {
+            _shapes = await _readService.Read(filePath);
         }
 
         private void OnGridChanged(string name)
@@ -79,16 +97,7 @@ namespace VectorGraphicViewer.UI.ViewModel
             DrawScaledShapes();
             ReadShapes(DestinationPath);
             DrawScaledShapes();
-            
-        }
 
-        public CartesianPlaneViewModel()
-        {
-            _readService = new ReadService();
-            _drawService = new DrawService();
-            _scaledShapes = new ObservableCollection<object>();
-            ReadCommand = new RelayCommand(o => ReadButtonClick());
-            ClearCommand = new RelayCommand(o => ClearButtonClick());
         }
 
         private void ClearButtonClick()
@@ -100,13 +109,14 @@ namespace VectorGraphicViewer.UI.ViewModel
             OnPropertyChanged(nameof(DestinationPath));
         }
 
-
-        private void DrawScaledShapes()
+        private async void DrawScaledShapes()
         {
             ScaledShapes.Clear();
-            var shapes = _drawService.GetScaledShapes(_shapes, new Point(CanvasWidth, CanvasHeight));
+            var shapes = await _drawService.GetScaledShapes(_shapes, new Point(CanvasWidth, CanvasHeight));
             shapes.AddRange(_scaledShapes);
             ScaledShapes = new ObservableCollection<object>(shapes);
         }
+
+        #endregion
     }
 }

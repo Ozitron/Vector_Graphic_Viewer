@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 using VectorGraphicViewer.UI.Model;
 using VectorGraphicViewer.UI.Model.Base;
@@ -15,20 +16,20 @@ namespace VectorGraphicViewer.UI.Service
     {
         private static List<IShape> _shapeList = null!;
 
-        List<IShape> IReadService.Read(string filePath)
+        async Task<List<IShape>> IReadService.Read(string filePath)
         {
             if (string.IsNullOrEmpty(filePath))
                 return _shapeList;
 
             if (Path.GetExtension(filePath) == "." + Enum.GetName(FileType.json))
             {
-                return ReadJsonData(filePath);
+                return await ReadJsonData(filePath);
             }
 
             throw new NotImplementedException();
         }
 
-        private static List<IShape> ReadJsonData(string filePath)
+        private static async Task<List<IShape>> ReadJsonData(string filePath)
         {
             using var reader = new StreamReader(filePath);
             var data = reader.ReadToEnd().ToLower();
@@ -61,7 +62,7 @@ namespace VectorGraphicViewer.UI.Service
                 }
             }
 
-            return _shapeList;
+            return await Task.FromResult(_shapeList);
         }
 
         private static Point GetPoint(string coordinates)
