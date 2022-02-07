@@ -16,7 +16,6 @@ namespace VectorGraphicViewer.ViewModel
         private double _canvasWidth;
         private double _canvasHeight;
         private ObservableCollection<object> _scaledShapes;
-        private readonly IDrawService _drawService;
         private bool _isScaled;
 
         #endregion
@@ -69,7 +68,6 @@ namespace VectorGraphicViewer.ViewModel
         #region Constructor
         public CartesianPlaneViewModel()
         {
-            _drawService = new DrawService();
             ScaledShapes = new ObservableCollection<object>();
             ReadCommand =  new RelayCommand(o => ReadButtonClick());
             ClearCommand = new RelayCommand(o => ClearButtonClick());
@@ -110,7 +108,7 @@ namespace VectorGraphicViewer.ViewModel
         private async void DrawScaledShapes()
         {
             ScaledShapes.Clear();
-            var shapes = await _drawService.GetScaledShapes(Shapes, new Point(CanvasWidth, CanvasHeight));
+            var shapes = await DrawService.GetScaledShapes(Shapes, new Point(CanvasWidth, CanvasHeight));
             shapes.AddRange(_scaledShapes);
             ScaledShapes = new ObservableCollection<object>(shapes);
         }

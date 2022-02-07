@@ -4,7 +4,6 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using Newtonsoft.Json;
-using VectorGraphicViewer.Business.Service;
 using VectorGraphicViewer.Business.Service.Base;
 using VectorGraphicViewer.Model;
 using VectorGraphicViewer.Model.Base;
