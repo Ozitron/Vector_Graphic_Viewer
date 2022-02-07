@@ -6,7 +6,7 @@ using System.Windows.Media;
 using VectorGraphicViewer.Model.Base;
 using VectorGraphicViewer.Util;
 
-namespace VectorGraphicViewer.Service
+namespace VectorGraphicViewer.Business.Service
 {
     internal class DrawService : IDrawService
     {
@@ -157,8 +157,11 @@ namespace VectorGraphicViewer.Service
             {
                 var maxPoint = shape.GetMaximumShapePoints();
 
-                xMax = maxPoint.X;
-                yMax = maxPoint.Y;
+                if(maxPoint.X > xMax)
+                    xMax = maxPoint.X;
+
+                if (maxPoint.Y > yMax)
+                    yMax = maxPoint.Y;
             }
 
             var xMaxTemp = (center.X / 2) / xMax;

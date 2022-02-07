@@ -2,9 +2,10 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Input;
+using VectorGraphicViewer.Business;
+using VectorGraphicViewer.Business.Service;
 using VectorGraphicViewer.Command;
 using VectorGraphicViewer.Model.Base;
-using VectorGraphicViewer.Service;
 
 namespace VectorGraphicViewer.ViewModel
 {
@@ -14,9 +15,7 @@ namespace VectorGraphicViewer.ViewModel
 
         private double _canvasWidth;
         private double _canvasHeight;
-        private List<IShape> _shapes;
         private ObservableCollection<object> _scaledShapes;
-        private readonly IReadService _readService;
         private readonly IDrawService _drawService;
         private bool _isScaled;
 
@@ -70,10 +69,9 @@ namespace VectorGraphicViewer.ViewModel
         #region Constructor
         public CartesianPlaneViewModel()
         {
-            _readService = new ReadService();
             _drawService = new DrawService();
             ScaledShapes = new ObservableCollection<object>();
-            ReadCommand = new RelayCommand(o => ReadButtonClick());
+            ReadCommand =  new RelayCommand(o => ReadButtonClick());
             ClearCommand = new RelayCommand(o => ClearButtonClick());
         }
 
@@ -81,15 +79,11 @@ namespace VectorGraphicViewer.ViewModel
 
         #region PrivateMethods
 
-        public List<IShape> Shapes
-        {
-            get => _shapes;
-            set { _shapes = value; }
-        }
+        public List<IShape> Shapes { get; set; }
 
         public async void ReadShapes(string filePath)
         {
-            _shapes = await _readService.Read(filePath);
+            Shapes = (List<IShape>)await ReadData.Read(filePath);
         }
 
         private void OnGridChanged(string name)
@@ -106,7 +100,7 @@ namespace VectorGraphicViewer.ViewModel
 
         private void ClearButtonClick()
         {
-            if (_shapes != null) _shapes.Clear();
+            if (Shapes != null) Shapes.Clear();
             ScaledShapes.Clear();
             DrawScaledShapes();
             DestinationPath = string.Empty;
@@ -116,7 +110,7 @@ namespace VectorGraphicViewer.ViewModel
         private async void DrawScaledShapes()
         {
             ScaledShapes.Clear();
-            var shapes = await _drawService.GetScaledShapes(_shapes, new Point(CanvasWidth, CanvasHeight));
+            var shapes = await _drawService.GetScaledShapes(Shapes, new Point(CanvasWidth, CanvasHeight));
             shapes.AddRange(_scaledShapes);
             ScaledShapes = new ObservableCollection<object>(shapes);
         }

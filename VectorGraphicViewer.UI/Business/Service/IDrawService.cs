@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using VectorGraphicViewer.Model.Base;
 
-namespace VectorGraphicViewer.Service
+namespace VectorGraphicViewer.Business.Service
 {
     internal interface IDrawService
     {

@@ -8,10 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Service\Operation\**" />
-    <EmbeddedResource Remove="Service\Operation\**" />
-    <None Remove="Service\Operation\**" />
-    <Page Remove="Service\Operation\**" />
+    <Compile Remove="Business\Service\Operation\**" />
+    <EmbeddedResource Remove="Business\Service\Operation\**" />
+    <None Remove="Business\Service\Operation\**" />
+    <Page Remove="Business\Service\Operation\**" />
   </ItemGroup>
 
   <ItemGroup>
