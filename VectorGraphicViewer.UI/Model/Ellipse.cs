@@ -32,6 +32,11 @@ namespace VectorGraphicViewer.Model
             return path;
         }
 
+        public Point GetMaximumShapePoints()
+        {
+            return new Point(Radius, Radius);
+        }
+
         public Ellipse(Point center, double radius, bool isFilled, Color color)
         {
             Center = center;

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using Color = System.Drawing.Color;
@@ -20,6 +21,11 @@ namespace VectorGraphicViewer.Model.Base
         public virtual Shape GetRelativeShape(Point canvasCenter, double scaleFactor, SolidColorBrush brush)
         {
             throw new NotImplementedException();
+        }
+
+        public virtual Point GetMaximumShapePoints()
+        {
+            return new Point(Points.Select(max => Math.Abs(max.X)).Max(), Points.Select(max => Math.Abs(max.Y)).Max());
         }
     }
 }

@@ -10,5 +10,7 @@ namespace VectorGraphicViewer.Model.Base
         public Color Color { get; }
 
         public Shape GetRelativeShape(Point canvasCenter, double scaleFactor, SolidColorBrush brush);
+
+        public Point GetMaximumShapePoints();
     }
 }

@@ -8,7 +8,7 @@ using Shape = System.Windows.Shapes.Shape;
 
 namespace VectorGraphicViewer.Model.Base
 {
-    internal abstract class PolygonShape : LinearShape
+    internal class PolygonShape : LinearShape
     {
         bool IsFilled { get; }
         

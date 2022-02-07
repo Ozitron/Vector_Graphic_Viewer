@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using VectorGraphicViewer.Model.Base;
 using VectorGraphicViewer.Util;
-using Ellipse = VectorGraphicViewer.Model.Ellipse;
 
 namespace VectorGraphicViewer.Service
 {
@@ -155,30 +152,17 @@ namespace VectorGraphicViewer.Service
 
             double xMax = 0;
             double yMax = 0;
-            double xMaxTemp;
-            double yMaxTemp;
 
             foreach (var shape in shapeList)
             {
-                if (shape is LinearShape linearShape)
-                {
-                    xMaxTemp = linearShape.Points.Select(max => Math.Abs(max.X)).Max();
-                    if (xMaxTemp > xMax)
-                        xMax = xMaxTemp;
+                var maxPoint = shape.GetMaximumShapePoints();
 
-                    yMaxTemp = linearShape.Points.Select(max => Math.Abs(max.Y)).Max();
-                    if (yMaxTemp > yMax)
-                        yMax = yMaxTemp;
-                }
-                else if (shape is Ellipse ellipticalShape)
-                {
-                    if (ellipticalShape.Radius > xMax) xMax = ellipticalShape.Radius;
-                    if (ellipticalShape.Radius > yMax) yMax = ellipticalShape.Radius;
-                }
+                xMax = maxPoint.X;
+                yMax = maxPoint.Y;
             }
 
-            xMaxTemp = (center.X / 2) / xMax;
-            yMaxTemp = (center.Y / 2) / yMax;
+            var xMaxTemp = (center.X / 2) / xMax;
+            var yMaxTemp = (center.Y / 2) / yMax;
 
             if (xMaxTemp > yMaxTemp)
             {
@@ -187,8 +171,5 @@ namespace VectorGraphicViewer.Service
 
             return xMaxTemp * 0.95;
         }
-
-
-
     }
 }
