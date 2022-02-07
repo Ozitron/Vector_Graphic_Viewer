@@ -21,5 +21,15 @@ namespace VectorGraphicViewer.Test
 
             Assert.NotNull(_viewModel.Shapes);
         }
+        
+
+        [Fact]
+        public void ShouldClearDestinationPathAfterClearClicked()
+        {
+            _viewModel.DestinationPath = "test";
+            _viewModel.ClearCommand.Execute(null);
+
+            Assert.Equal(_viewModel.DestinationPath, string.Empty);
+        }
     }
 }

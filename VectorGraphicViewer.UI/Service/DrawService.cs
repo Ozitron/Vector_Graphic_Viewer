@@ -19,14 +19,15 @@ namespace VectorGraphicViewer.UI.Service
             var canvasCenter = GeometryUtil.GetCartesianCenter(canvas);
             var scaleFactor = CalculateScaleFactor(canvas, shapes);
 
-            scaledShapes.AddRange(DrawCartesianLines(canvas, canvasCenter, scaleFactor));
+            if (canvas != new Point(0, 0))
+                scaledShapes.AddRange(DrawCartesianLines(canvas, canvasCenter, scaleFactor));
 
             if (shapes != null)
             {
                 foreach (var shape in shapes)
                 {
                     var brush = new SolidColorBrush(Color.FromArgb(shape.Color.A, shape.Color.R, shape.Color.G, shape.Color.B));
-                    
+
                     scaledShapes.Add(shape.GetRelativeShape(canvasCenter, scaleFactor, brush));
                 }
             }
