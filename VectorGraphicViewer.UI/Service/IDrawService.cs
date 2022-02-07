@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows;
-using VectorGraphicViewer.UI.Model.Base;
+using VectorGraphicViewer.Model.Base;
 
-namespace VectorGraphicViewer.UI.Service
+namespace VectorGraphicViewer.Service
 {
     internal interface IDrawService
     {

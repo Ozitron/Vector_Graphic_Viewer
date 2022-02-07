@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using VectorGraphicViewer.UI.Model.Base;
+using VectorGraphicViewer.Model.Base;
 
-namespace VectorGraphicViewer.UI.Service
+namespace VectorGraphicViewer.Service
 {
     internal interface IReadService
     {

@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace VectorGraphicViewer.UI.Util
+namespace VectorGraphicViewer.Util
 {
     internal static class GeometryUtil
     {

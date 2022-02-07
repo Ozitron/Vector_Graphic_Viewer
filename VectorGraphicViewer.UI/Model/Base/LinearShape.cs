@@ -4,7 +4,7 @@ using System.Windows.Shapes;
 using Color = System.Drawing.Color;
 using Point = System.Windows.Point;
 
-namespace VectorGraphicViewer.UI.Model.Base
+namespace VectorGraphicViewer.Model.Base
 {
     internal abstract class LinearShape : IShape
     {

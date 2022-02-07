@@ -1,15 +1,14 @@
-﻿<Window x:Class="VectorGraphicViewer.UI.View.CartesianPlaneView"
+﻿<Window x:Class="VectorGraphicViewer.View.CartesianPlaneView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:VectorGraphicViewer.UI.View"
-        xmlns:viewModel="clr-namespace:VectorGraphicViewer.UI.ViewModel"
-        xmlns:util="clr-namespace:VectorGraphicViewer.UI.Util"
+        xmlns:viewModel1="clr-namespace:VectorGraphicViewer.ViewModel"
+        xmlns:util="clr-namespace:VectorGraphicViewer.Util"
         mc:Ignorable="d"
         Title="Vector Graphic Viewer" Height="520" Width="600" MinHeight="240" MinWidth="320" Background="WhiteSmoke">
     <Window.DataContext>
-        <viewModel:CartesianPlaneViewModel/>
+        <viewModel1:CartesianPlaneViewModel/>
     </Window.DataContext>
     <Grid>
         <Grid.RowDefinitions>

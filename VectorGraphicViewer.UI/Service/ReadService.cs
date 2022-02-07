@@ -4,13 +4,13 @@ using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using VectorGraphicViewer.UI.Model;
-using VectorGraphicViewer.UI.Model.Base;
-using VectorGraphicViewer.UI.Util;
+using VectorGraphicViewer.Model;
+using VectorGraphicViewer.Model.Base;
+using VectorGraphicViewer.Util;
 using Color = System.Drawing.Color;
 using Point = System.Windows.Point;
 
-namespace VectorGraphicViewer.UI.Service
+namespace VectorGraphicViewer.Service
 {
     public class ReadService : IReadService
     {

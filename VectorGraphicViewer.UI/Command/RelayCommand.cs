@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Input;
 
-namespace VectorGraphicViewer.UI.Command
+namespace VectorGraphicViewer.Command
 { public class RelayCommand : ICommand
     {
         private readonly Action<object> _execute;

@@ -3,7 +3,7 @@ using Color = System.Drawing.Color;
 using Point = System.Windows.Point;
 using Shape = System.Windows.Shapes.Shape;
 
-namespace VectorGraphicViewer.UI.Model.Base
+namespace VectorGraphicViewer.Model.Base
 {
     public interface IShape
     {

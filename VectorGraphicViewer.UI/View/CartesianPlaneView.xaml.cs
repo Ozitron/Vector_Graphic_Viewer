@@ -3,7 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using Microsoft.Win32;
 
-namespace VectorGraphicViewer.UI.View
+namespace VectorGraphicViewer.View
 {
     public partial class CartesianPlaneView : Window
     {

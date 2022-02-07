@@ -1,6 +1,6 @@
 using System;
 using System.IO;
-using VectorGraphicViewer.UI.ViewModel;
+using VectorGraphicViewer.ViewModel;
 using Xunit;
 
 namespace VectorGraphicViewer.Test

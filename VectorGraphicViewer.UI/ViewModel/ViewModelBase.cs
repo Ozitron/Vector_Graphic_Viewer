@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace VectorGraphicViewer.UI.ViewModel
+namespace VectorGraphicViewer.ViewModel
 {
     public class ViewModelBase : INotifyPropertyChanged
     {

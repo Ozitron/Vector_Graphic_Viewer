@@ -2,11 +2,11 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Input;
-using VectorGraphicViewer.UI.Command;
-using VectorGraphicViewer.UI.Model.Base;
-using VectorGraphicViewer.UI.Service;
+using VectorGraphicViewer.Command;
+using VectorGraphicViewer.Model.Base;
+using VectorGraphicViewer.Service;
 
-namespace VectorGraphicViewer.UI.ViewModel
+namespace VectorGraphicViewer.ViewModel
 {
     public class CartesianPlaneViewModel : ViewModelBase
     {
@@ -72,7 +72,7 @@ namespace VectorGraphicViewer.UI.ViewModel
         {
             _readService = new ReadService();
             _drawService = new DrawService();
-            _scaledShapes = new ObservableCollection<object>();
+            ScaledShapes = new ObservableCollection<object>();
             ReadCommand = new RelayCommand(o => ReadButtonClick());
             ClearCommand = new RelayCommand(o => ClearButtonClick());
         }
@@ -102,8 +102,6 @@ namespace VectorGraphicViewer.UI.ViewModel
         {
             DrawScaledShapes();
             ReadShapes(DestinationPath);
-            DrawScaledShapes();
-
         }
 
         private void ClearButtonClick()

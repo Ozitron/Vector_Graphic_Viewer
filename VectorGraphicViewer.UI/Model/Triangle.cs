@@ -1,8 +1,8 @@
 ﻿using System.Drawing;
-using VectorGraphicViewer.UI.Model.Base;
+using VectorGraphicViewer.Model.Base;
 using Point = System.Windows.Point;
 
-namespace VectorGraphicViewer.UI.Model
+namespace VectorGraphicViewer.Model
 {
     internal class Triangle : PolygonShape
     {

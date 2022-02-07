@@ -1,12 +1,12 @@
 ﻿using System.Linq;
 using System.Windows.Media;
-using VectorGraphicViewer.UI.Model.Base;
-using VectorGraphicViewer.UI.Util;
+using VectorGraphicViewer.Model.Base;
+using VectorGraphicViewer.Util;
 using Color = System.Drawing.Color;
 using Point = System.Windows.Point;
 using Shape = System.Windows.Shapes.Shape;
 
-namespace VectorGraphicViewer.UI.Model
+namespace VectorGraphicViewer.Model
 {
     internal class Line : LinearShape
     {

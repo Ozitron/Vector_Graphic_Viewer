@@ -5,11 +5,11 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using VectorGraphicViewer.UI.Model.Base;
-using VectorGraphicViewer.UI.Util;
-using Ellipse = VectorGraphicViewer.UI.Model.Ellipse;
+using VectorGraphicViewer.Model.Base;
+using VectorGraphicViewer.Util;
+using Ellipse = VectorGraphicViewer.Model.Ellipse;
 
-namespace VectorGraphicViewer.UI.Service
+namespace VectorGraphicViewer.Service
 {
     internal class DrawService : IDrawService
     {

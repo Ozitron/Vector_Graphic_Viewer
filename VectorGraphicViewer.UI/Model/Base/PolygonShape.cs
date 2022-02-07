@@ -1,12 +1,12 @@
 ﻿using System.Linq;
 using System.Windows.Media;
 using System.Windows.Shapes;
-using VectorGraphicViewer.UI.Util;
+using VectorGraphicViewer.Util;
 using Color = System.Drawing.Color;
 using Point = System.Windows.Point;
 using Shape = System.Windows.Shapes.Shape;
 
-namespace VectorGraphicViewer.UI.Model.Base
+namespace VectorGraphicViewer.Model.Base
 {
     internal abstract class PolygonShape : LinearShape
     {
