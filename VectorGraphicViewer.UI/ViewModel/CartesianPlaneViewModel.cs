@@ -100,8 +100,8 @@ namespace VectorGraphicViewer.ViewModel
 
         private void ReadButtonClick()
         {
-            DrawScaledShapes();
             ReadShapes(DestinationPath);
+            DrawScaledShapes();
         }
 
         private void ClearButtonClick()
